@@ -1,18 +1,20 @@
-# madera_front
+# Front du projet Madera
 
-## Project setup
+### Installation des dépendences
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Pour lancer la solution en mode développement
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Pour lancer la solution en mode production
 ```
 npm run build
+
+http-server ./dist
 ```
 
 ### Run your tests
@@ -25,5 +27,3 @@ npm run test
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
