@@ -1,6 +1,21 @@
 <template lang="pug">
-  #hello
-    v-btn(small="", color="error") Primary
+  div
+    v-app-bar(color='deep-purple accent-4', dark='')
+      v-app-bar-nav-icon
+      v-toolbar-title Page title
+      v-spacer
+      v-btn(icon='')
+        v-icon mdi-heart
+      v-btn(icon='')
+        v-icon mdi-magnify
+      v-menu(left='', bottom='')
+        template(v-slot:activator='{ on }')
+          v-btn(icon='', v-on='on')
+            v-icon mdi-dots-vertical
+        v-list
+          v-list-item(v-for='n in 5', :key='n', @click='')
+            v-list-item-title Option {{ n }}
+    v-btn(large='', @click='installer') Installer
 </template>
 
 <script>
@@ -8,6 +23,35 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      installBtn: 'none',
+      installer: undefined
+    }
+  },
+  created() {
+    let installPrompt
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault()
+      console.log('fdgfgergre')
+      console.log(e)
+      installPrompt = e
+      this.installBtn = 'block'
+    })
+    this.installer = () => {
+      this.installBtn = 'none'
+      installPrompt.prompt()
+      installPrompt.userChoice.then((result) => {
+        if (result.outcome === 'accepted') {
+          console.log('User accepted')
+        } else {
+          console.log('User denied')
+        }
+        installPrompt = null
+      })
+    }
   }
 }
 </script>
