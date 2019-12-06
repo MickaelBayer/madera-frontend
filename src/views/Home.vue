@@ -5,19 +5,19 @@
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue';
-import exempleComponent from '@/components/exempleComponent.vue';
+import HelloWorld from '@/components/HelloWorld.vue'
+import exempleComponent from '@/components/exempleComponent.vue'
 
 export default {
   name: 'home',
   components: {
     HelloWorld,
-    exempleComponent,
+    exempleComponent
   },
   data() {
     return {
-      msg: 'Welcome to Madera Front',
-    };
-  },
-};
+      msg: 'Welcome to Madera Front'
+    }
+  }
+}
 </script>

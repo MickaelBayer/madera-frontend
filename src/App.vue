@@ -11,9 +11,11 @@ export default {
   name: 'App',
   data() {
     return {
-    };
+    }
   },
-};
+  mounted() {
+  }
+}
 </script>
 
 <style lang="sass">
