@@ -15,7 +15,7 @@
         v-list
           v-list-item(v-for='n in 5', :key='n', @click='')
             v-list-item-title Option {{ n }}
-    v-btn(large='', @click='installer') Installer
+      v-btn(small='', v-if='installBtn', @click='installer') Installer
 </template>
 
 <script>
@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      installBtn: 'none',
+      installBtn: false,
       installer: undefined
     }
   },
@@ -35,13 +35,12 @@ export default {
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
-      console.log('fdgfgergre')
       console.log(e)
       installPrompt = e
-      this.installBtn = 'block'
+      this.installBtn = true
     })
     this.installer = () => {
-      this.installBtn = 'none'
+      this.installBtn = false
       installPrompt.prompt()
       installPrompt.userChoice.then((result) => {
         if (result.outcome === 'accepted') {
