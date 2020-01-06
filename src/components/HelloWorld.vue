@@ -27,35 +27,33 @@ export default {
   data() {
     return {
       installBtn: false,
-      installer: undefined
+      installPrompt: null
     }
   },
   created() {
-    let installPrompt
-
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
-      console.log(e)
-      installPrompt = e
+      this.installPrompt = e
       this.installBtn = true
     })
-    this.installer = () => {
+  },
+  methods: {
+    installer() {
       this.installBtn = false
-      installPrompt.prompt()
-      installPrompt.userChoice.then((result) => {
+      this.installPrompt.prompt()
+      this.installPrompt.userChoice.then((result) => {
         if (result.outcome === 'accepted') {
           console.log('User accepted')
         } else {
           console.log('User denied')
         }
-        installPrompt = null
+        this.installPrompt = null
       })
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
