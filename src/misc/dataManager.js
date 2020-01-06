@@ -1,3 +1,4 @@
+/*
 import api from '../Api'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -12,3 +13,4 @@ export async function getAllUsers() {
     })
   return allUsers
 }
+*/

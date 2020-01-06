@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getAllUsers } from '../misc/dataManager'
+// import { getAllUsers } from '../misc/dataManager'
 
 export default {
   name: 'exempleComponent',
@@ -29,7 +29,7 @@ export default {
   },
   async mounted() {
     // fonction appelé dès le lancement de la page
-    this.users = await getAllUsers() // appel des données en base de données
+    // this.users = await getAllUsers() // appel des données en base de données
   },
   methods: {
     // Inscrire toutes les fonctions ici
