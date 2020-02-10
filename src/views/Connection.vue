@@ -7,20 +7,25 @@
       v-text-field(v-model='password', label='Mot de passe', required='')
       .forgetPwd Mot de passe oublié
       v-layout(row='', wrap='', justify-end='', class="btnConnexion")
-        v-btn(outlined='' right=true color="#409a1b") Connexion
+        v-btn(outlined='', right=true, color="#409a1b", @click='clickLogin') Connexion
 </template>
 
 <script>
-
+import userService from '../services/user.service'
 
 export default {
-  name: 'Connection',
+  name: 'connection',
   components: {
   },
   data() {
     return {
       mail: null,
       password: null
+    }
+  },
+  methods: {
+    clickLogin() {
+      userService.login(this.mail, this.password)
     }
   }
 }
