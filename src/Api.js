@@ -1,16 +1,8 @@
-/*
 import axios from 'axios'
 
-const SERVER_URL = 'http://localhost:8080'
+export const SERVER_URL = 'http://localhost:8282'
 
-const instance = axios.create({
+export const instance = axios.create({
   baseURL: SERVER_URL,
   timeout: 10000
 })
-
-export default {
-  getAllUser: () => instance.get('user/find', {
-    transformResponse: [(data) => data]
-  })
-}
-*/
