@@ -19,6 +19,7 @@
 <script>
 // eslint-disable-next-line import/no-cycle
 import userService from '../services/user.service'
+import router from '../router'
 
 export default {
   name: 'connection',
@@ -35,6 +36,8 @@ export default {
   methods: {
     clickLogin() {
       userService.login(this.mail, this.password)
+      // Si connexion
+      router.go('/home')
     },
     clickForgetPwd() {
       console.log('mot de passe oublié')
