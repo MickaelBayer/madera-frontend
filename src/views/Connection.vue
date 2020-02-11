@@ -2,25 +2,44 @@
   .home
     .logo
       img(src="../assets/logo.png" height="100%")
-    .form
+    .form(v-if="!forgetPwd")
       v-text-field(v-model='mail', label='E-mail', required='')
       v-text-field(v-model='password', label='Mot de passe', required='')
-      .forgetPwd Mot de passe oublié
+      .forgetPwd(@click="forgetPwd=true") Mot de passe oublié
       v-layout(row='', wrap='', justify-end='', class="btnConnexion")
-        v-btn(outlined='' right=true color="#409a1b") Connexion
+        v-btn(outlined='', right=true, color="#409a1b", @click='clickLogin') Connexion
+    .form(v-if="forgetPwd")
+      .titleForget Mot de passe oublié ?
+      v-text-field(v-model='mailForgetPwd', label='E-mail', required='')
+      v-layout(row='', wrap='', justify-end='', class="btnConnexion")
+        v-btn(outlined='', class="cancelForget" right=true, color="#409a1b", @click='forgetPwd = false') Annuler
+        v-btn(outlined='', right=true, color="#409a1b", @click='clickForgetPwd') Valider
 </template>
 
 <script>
-
+// eslint-disable-next-line import/no-cycle
+import userService from '../services/user.service'
 
 export default {
-  name: 'Connection',
+  name: 'connection',
   components: {
   },
   data() {
     return {
       mail: null,
-      password: null
+      password: null,
+      mailForgetPwd: null,
+      forgetPwd: false
+    }
+  },
+  methods: {
+    clickLogin() {
+      userService.login(this.mail, this.password)
+    },
+    clickForgetPwd() {
+      console.log('mot de passe oublié')
+      // todo appeler la fonction pour changer le mot de passe via email
+      this.forgetPwd = false
     }
   }
 }
@@ -38,11 +57,14 @@ export default {
     margin: 7vh 0 5vh 0
     width: 100%
   .form
-    width: 30vw
+    width: 19rem
   .forgetPwd
     text-decoration: underline
     font-size: 0.8rem
     text-align: left
+    cursor: pointer
   .btnConnexion
     margin-top: 3vh
+  .cancelForget
+    margin-right: 1rem
 </style>
