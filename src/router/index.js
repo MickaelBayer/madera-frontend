@@ -13,7 +13,7 @@ export const router = new VueRouter({
     { path: '/home', component: home },
 
     // otherwise redirect to home
-    { path: '*', redirect: '/' }
+    //{ path: '*', redirect: '/' }
   ]
 })
 
