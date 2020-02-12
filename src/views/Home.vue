@@ -1,13 +1,13 @@
 <template lang="pug">
   .home
     .zoneItem
-      .homeItem
+      .homeItem(@click="redirectItem1")
         .item
           img(v-if="role===1" class="itemImg" src='../assets/add.svg')
           img(v-else-if="role===2" class="itemImg" src='../assets/sketch.svg')
           img(v-else class="itemImg" src='../assets/repair.svg')
           .itemTitle {{itemTitle1}}
-      .homeItem
+      .homeItem(@click="redirectItem2")
         .item
           img(class="itemImg" src='../assets/view.svg')
           .itemTitle {{itemTitle2}}
@@ -15,6 +15,7 @@
 
 
 <script>
+  import router from '../router';
   export default {
     name: 'home',
     components: {
@@ -39,6 +40,15 @@
       // todo récupérer l'id de l'utilisateur connecté
     },
     methods: {
+      redirectItem1(){
+        if(this.role === 1) this.$router.push('/adduser')
+        else if (this.role === 2) this.$router.push('/createProject')
+        else this.$router.push('/addModule')
+      },
+      redirectItem2(){
+        if(this.role === 1) this.$router.push('/userlist')
+        else this.$router.push('/projectList')
+      }
     }
   }
 </script>
@@ -59,6 +69,7 @@
     display: flex
     justify-content: center
     align-items: center
+    cursor: pointer
   .item
     background: #409a1b
     height: 40vh
