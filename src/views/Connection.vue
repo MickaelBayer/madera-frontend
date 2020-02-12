@@ -1,7 +1,6 @@
 <template lang="pug">
   .home
-    .logo
-      img(src="../assets/logo.png" height="100%")
+    .titleConnection Connexion
     .form(v-if="!forgetPwd")
       v-text-field(v-model='mail', label='E-mail', required='')
       v-text-field(v-model='password', label='Mot de passe', required='')
@@ -60,11 +59,16 @@ export default {
     width: 19rem
   .forgetPwd
     text-decoration: underline
-    font-size: 0.8rem
+    font-size: 1rem
     text-align: left
     cursor: pointer
   .btnConnexion
     margin-top: 3vh
   .cancelForget
     margin-right: 1rem
+  .titleConnection
+    margin-top: 7rem
+    font-weight: bold
+    margin-bottom: 4rem
+    font-size: 2.4rem
 </style>
