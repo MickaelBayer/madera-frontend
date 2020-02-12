@@ -19,7 +19,7 @@
   }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
   .topBar
     width: 100%
     background: #e5dcd0
