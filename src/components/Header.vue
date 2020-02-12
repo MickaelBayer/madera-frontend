@@ -1,12 +1,13 @@
 <template lang="pug">
   .topBar
     .logoMadera
-      img(src="../assets/logo.png")
+      img(src="../assets/logo.png" @click="goHome")
     .btnMyAccount
-      v-btn(large=true color="#409a1b" style="color: white" ) Mon compte
+      v-btn(large=true color="#409a1b" style="color: white" @click="goToMyAccount") Mon compte
 </template>
 
 <script>
+  import router from '../router';
   export default {
     name: 'Header',
     data() {
@@ -15,11 +16,19 @@
     },
     mounted() {
       // todo ne pas afficher le bouton mon compte si l'utilisateur n'est pas connecté
+    },
+    methods: {
+      goToMyAccount(){
+        this.$router.push('/account')
+      },
+      goHome(){
+        this.$router.push('/home')
+      }
     }
   }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
   .topBar
     width: 100%
     background: #e5dcd0
