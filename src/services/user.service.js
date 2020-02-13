@@ -4,6 +4,7 @@ import { instance } from '../Api'
 function logout() {
   // remove user from local storage to log user out
   localStorage.removeItem('user')
+  instance.defaults.headers.common['Authorization'] = null
 }
 
 function handleResponse(response) {
@@ -23,18 +24,25 @@ function handleResponse(response) {
 }
 
 function login(mail, password) {
-  console.log('test', JSON.stringify({ mail, password }))
-  return instance.post('/login', JSON.stringify({ mail, password }))
-    .then(handleResponse)
-    .then(user => {
-      // login successful if there's a jwt token in the response
-      if (user.token) {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(user))
-      }
-
-      return user
-    })
+  instance.post('/login', {mail: mail, password: password})
+  .then(response => {
+    if (response.status === 200) {
+      localStorage.setItem('user', JSON.stringify(response.data))
+      instance.defaults.headers.common['Authorization'] = response.data.token
+      //router.go('/home')
+    }
+  })
+  .catch(error => {
+    console.log(error)
+    if(error.status === 401 ) {
+      // auto logout if 401 response returned from api
+      logout()
+      router.go('/login')
+    }
+    else {
+      console.log(error)
+    }
+  })
 }
 
 function getAll() {
