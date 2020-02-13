@@ -22,7 +22,7 @@
     },
     data() {
       return {
-        role: 3
+        role: null
       }
     },
     computed: {
@@ -37,7 +37,7 @@
       }
     },
     mounted() {
-      // todo récupérer l'id de l'utilisateur connecté
+      this.role = Number(JSON.parse(localStorage.getItem('user')).userRole)
     },
     methods: {
       redirectItem1(){
