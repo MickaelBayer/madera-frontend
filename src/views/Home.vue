@@ -22,7 +22,7 @@
     },
     data() {
       return {
-        role: null
+        role: 1
       }
     },
     computed: {
