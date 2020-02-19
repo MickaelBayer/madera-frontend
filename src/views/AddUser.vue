@@ -6,13 +6,15 @@
       v-text-field(v-model='firstname', label='Prénom', required='')
       v-text-field(v-model='phone', label='N° Téléphone', required='')
       v-text-field(v-model='mail', label='E-mail', required='')
-      v-select(:items='roles', v-model='role' label='Role' item-text="label" item-value="id")
+      v-select(:items='roles', v-model='role' label='Role' item-text="name" item-value="id")
       v-layout(row='', wrap='', justify-end='', class="btnCreate")
         v-btn(outlined='', class="cancelCreate" right=true, color="#d92616", @click='backHome()') Annuler
         v-btn(outlined='', right=true, color="#409a1b", @click='createUser()') Enregistrer
 </template>
 
 <script>
+  import userService from '../services/user.service';
+  import roleService from '../services/role.service';
   import router from '../router';
   export default {
     name: 'addUser',
@@ -25,35 +27,26 @@
         lastname: null,
         role: null,
         phone: null,
+        roles: []
       }
     },
+    async mounted() {
+      const roles = await roleService.getAll();
+      this.roles = roles.data;
+    },
     computed: {
-      roles(){
-        // todo récupérer les valeurs en base de donnée
-        return [{
-          label: 'Admin',
-          id: 1
-        },{
-          label: 'Commercial',
-          id: 2
-        },{
-          label: 'Bureau d\'étude',
-          id: 3
-        }
-        ]
-      }
     },
     methods: {
       backHome() {
         this.$router.push('/home')
       },
-      createUser(){
-        // todo appeler la fonction pour créer un utilisateur
-        console.log(this.role)
-        console.log(this.firstname)
-        console.log(this.lastname)
-        console.log(this.mail)
-        console.log(this.phone)
+      async createUser(){
+        let role;
+        for(const r of this.roles){
+          if(r.id === this.role) role = r
+        }
+        const signup = await userService.signup(this.firstname, this.lastname, this.mail, "1234", this.phone, role)
+        console.log(signup)
       }
     }
   }

@@ -29,15 +29,32 @@ function login(mail, password) {
   })
 }
 
-/*
-function getAll() {
-  return instance.get('/user').then(handleResponse)
+function signup(firstname, lastname, mail, password, phone, role) {
+  instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role})
+    .then(response => {
+      console.log(response.status)
+      if (response.status === 201) {
+        router.push('/home')
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      if(error.status === 401 ) {
+        console.log("erreur 401")
+      }else if(error.status === 500){
+        console.log('erreur 500')
+      }
+      else {
+        console.log(error)
+        return 'Erreur'
+      }
+    })
 }
-*/
 
 const userService = {
   login,
   logout,
+  signup
   // getAll
 }
 
