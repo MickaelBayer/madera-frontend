@@ -32,7 +32,7 @@ export const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // redirect to login page if not logged in and trying to access a restricted page
   // TODO trier les pages qui sont accessible ou non avec connexion
-  const publicPages = ['/login', '/', '/home', '/adduser', '/account', '/userlist', '/projectList', '/createProject', '/addModule']
+  const publicPages = ['/login', '/']
   const authRequired = !publicPages.includes(to.path)
   const loggedIn = localStorage.getItem('user')
 

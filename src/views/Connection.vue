@@ -3,7 +3,7 @@
     .titleConnection Connexion
     .form(v-if="!forgetPwd")
       v-text-field(v-model='mail', label='E-mail', required='')
-      v-text-field(v-model='password', label='Mot de passe', required='')
+      v-text-field(v-model='password', type="password" label='Mot de passe', required='', @keyup.enter="clickLogin")
       .forgetPwd(@click="forgetPwd=true") Mot de passe oublié
       v-layout(row='', wrap='', justify-end='', class="btnConnexion")
         v-btn(outlined='', right=true, color="#409a1b", @click='clickLogin') Connexion
