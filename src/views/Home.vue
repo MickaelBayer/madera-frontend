@@ -1,14 +1,14 @@
 <template lang="pug">
   .home
     .zoneItem
-      .homeItem(@click="redirectItem1")
-        .item
+      .homeItem
+        .item(@click="redirectItem1")
           img(v-if="role===1" class="itemImg" src='../assets/add.svg')
           img(v-else-if="role===2" class="itemImg" src='../assets/sketch.svg')
           img(v-else class="itemImg" src='../assets/repair.svg')
           .itemTitle {{itemTitle1}}
-      .homeItem(@click="redirectItem2")
-        .item
+      .homeItem
+        .item(@click="redirectItem2")
           img(class="itemImg" src='../assets/view.svg')
           .itemTitle {{itemTitle2}}
 </template>
@@ -69,10 +69,10 @@
     display: flex
     justify-content: center
     align-items: center
-    cursor: pointer
   .item
     background: #409a1b
     height: 40vh
+    cursor: pointer
     width: 40vh
     border-radius: 0.8rem
     display: flex
@@ -89,4 +89,7 @@
   .itemImg
     height: 80%
     margin: 1rem 0
+  @media(max-width: 850px)
+    .zoneItem
+      flex-direction: column
 </style>

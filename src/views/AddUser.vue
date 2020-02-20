@@ -45,7 +45,7 @@
         for(const r of this.roles){
           if(r.id === this.role) role = r
         }
-        const signup = await userService.signup(this.firstname, this.lastname, this.mail, "1234", this.phone, role)
+        const signup = await userService.signup(this.firstname, this.lastname, this.mail, "test123", this.phone, role)
         console.log(signup)
       }
     }

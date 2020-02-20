@@ -5,6 +5,7 @@ function logout() {
   // remove user from local storage to log user out
   localStorage.removeItem('user')
   instance.defaults.headers.common['Authorization'] = null
+  location.reload()
 }
 
 function login(mail, password) {
@@ -14,6 +15,7 @@ function login(mail, password) {
       localStorage.setItem('user', JSON.stringify(response.data))
       instance.defaults.headers.common['Authorization'] = response.data.token
       router.push('/home')
+      location.reload()
     }
   })
   .catch(error => {

@@ -1,21 +1,23 @@
 <template lang="pug">
-  .topBar
+  .topBar(ref="header")
     .logoMadera
       img(src="../assets/logo.png" @click="goHome")
-    .btnMyAccount
+    .btnMyAccount(v-if="displayBtn")
       v-btn(large=true color="#409a1b" style="color: white" @click="goToMyAccount") Mon compte
 </template>
 
 <script>
   import router from '../router';
+
   export default {
     name: 'Header',
     data() {
       return {
+        displayBtn: false
       }
     },
     mounted() {
-      // todo ne pas afficher le bouton mon compte si l'utilisateur n'est pas connecté
+      if(localStorage.getItem('user')) this.displayBtn = true
     },
     methods: {
       goToMyAccount(){
