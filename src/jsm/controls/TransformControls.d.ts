@@ -41,5 +41,7 @@ export class TransformControls extends Object3D {
 	setSize( size: number ): void;
 	setSpace( space: string ): void;
 	dispose(): void;
+	remove( object: Object3D): this;
+	
 
 }

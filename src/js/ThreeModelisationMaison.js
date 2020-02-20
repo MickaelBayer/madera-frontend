@@ -1,105 +1,141 @@
-import * as THREE from '../../build/three.module.js';
+			import * as THREE from '../../build/three.module.js';
 
-			import Stats from '../jsm/libs/stats.module.js';
+			import { OrbitControls } from '../jsm/controls/OrbitControls.js';
 
-			import { DragControls } from '../jsm/controls/DragControls.js';
+			import { TransformControls } from '../jsm/controls/TransformControls.js';
 
 			var container, stats;
-			var camera, scene, renderer;
-            var objects = [];
+			var camera, scene, renderer, control, orbit;
+			var objects = [];
+			var arrayOfElements = [];
+			var i =0;
             
             window.onload=onload;
 
             function onload() {
-                init();
-                animate();
+				init();
+			
+                render();
                 }
 
 			function init() {
 
-                alert('init');
-                container = document.getElementById('container');
-                
-                alert(container);
-                
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 5000 );
-				camera.position.z = 1000;
 
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xf0f0f0 );
-
-				scene.add( new THREE.AmbientLight( 0x505050 ) );
-
-				var light = new THREE.SpotLight( 0xffffff, 1.5 );
-				light.position.set( 0, 500, 2000 );
-				light.angle = Math.PI / 9;
-
-				light.castShadow = true;
-				light.shadow.camera.near = 1000;
-				light.shadow.camera.far = 4000;
-				light.shadow.mapSize.width = 1024;
-				light.shadow.mapSize.height = 1024;
-
-				scene.add( light );
-
-				var geometry = new THREE.BoxBufferGeometry( 40, 40, 40 );
-
-				for ( var i = 0; i < 200; i ++ ) {
-
-					var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
-
-					object.position.x = Math.random() * 1000 - 500;
-					object.position.y = Math.random() * 600 - 300;
-					object.position.z = Math.random() * 800 - 400;
-
-					object.rotation.x = Math.random() * 2 * Math.PI;
-					object.rotation.y = Math.random() * 2 * Math.PI;
-					object.rotation.z = Math.random() * 2 * Math.PI;
-
-					object.scale.x = Math.random() * 2 + 1;
-					object.scale.y = Math.random() * 2 + 1;
-					object.scale.z = Math.random() * 2 + 1;
-
-					object.castShadow = true;
-					object.receiveShadow = true;
-
-					scene.add( object );
-
-					objects.push( object );
-
-				}
-
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				container = document.getElementById('container');
+                renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
 
-				renderer.shadowMap.enabled = true;
-				renderer.shadowMap.type = THREE.PCFShadowMap;
+				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3000 );
+				camera.position.set( 1000, 500, 1000 );
+				camera.lookAt( 0, 200, 0 );
 
-				container.appendChild(renderer.domElement);
+				scene = new THREE.Scene();
+				scene.add( new THREE.GridHelper( 1000, 10 ) );
 
-				var controls = new DragControls( objects, camera, renderer.domElement );
 
-				controls.addEventListener( 'dragstart', function ( event ) {
+				orbit = new OrbitControls( camera, renderer.domElement );
+				orbit.update();
+				orbit.addEventListener( 'change', render );
 
-					event.object.material.emissive.set( 0xaaaaaa );
+				control = new TransformControls( camera, renderer.domElement );
+				control.addEventListener( 'change', render );
+
+				control.addEventListener( 'dragging-changed', function ( event ) {
+
+					orbit.enabled = ! event.value;
 
 				} );
 
-				controls.addEventListener( 'dragend', function ( event ) {
 
-					event.object.material.emissive.set( 0x000000 );
-
-				} );
-
-				stats = new Stats();
-				container.appendChild(stats.dom);
-
-				//
+				
+				scene.add( control );
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
+				window.addEventListener( 'keydown', function ( event ) {
+
+					switch ( event.keyCode ) {
+
+						case 81: // Q
+							control.setSpace( control.space === "local" ? "world" : "local" );
+							break;
+
+						case 16: // Shift
+							control.setTranslationSnap( 100 );
+							control.setRotationSnap( THREE.MathUtils.degToRad( 15 ) );
+							control.setScaleSnap( 0.25 );
+							break;
+
+
+						case 87: // W
+							control.setMode( "translate" );
+							break;
+
+						case 69: // E
+							control.setMode( "rotate" );
+							break;
+
+						case 82: // R
+							control.setMode( "scale" );
+							break;
+
+							case 46:
+							var i;
+							arrayOfElements.forEach(elements =>  i = elements.name);
+							var selectedObject = scene.getObjectByName(i);
+							
+							selectedObject.remove();
+
+							break;
+					}
+				} );
+
+				window.addEventListener( 'keyup', function ( event ) {
+
+					switch ( event.keyCode ) {
+
+						case 17: // Ctrl
+							control.setTranslationSnap( null );
+							control.setRotationSnap( null );
+							control.setScaleSnap( null );
+							break;
+
+					}
+
+				} );
+				document.getElementById('Wall').addEventListener("click", addCube);
+			
+				
+			 
+			
+				
 			}
+
+
+
+		
+			
+			function addCube() {
+				
+				var texture = new THREE.TextureLoader().load( '../ressources/bois.jpg' );
+
+				// immediately use the texture for material creation
+				var material = new THREE.MeshBasicMaterial( { map: texture } )
+				var geometry = new THREE.BoxBufferGeometry( 100, 300, 500 );
+				var material = new THREE.MeshBasicMaterial( { color: 0xfffff,  transparent: false } );
+				var mesh = new THREE.Mesh( geometry, material );
+				mesh.name = 'wall ' + i++;
+				scene.add( mesh );
+				
+
+				control.attach( mesh );
+				scene.add( control );
+		
+				arrayOfElements.push(mesh);
+				
+			 }
 
 			function onWindowResize() {
 
@@ -108,16 +144,7 @@ import * as THREE from '../../build/three.module.js';
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
-			}
-
-			//
-
-			function animate() {
-
-				requestAnimationFrame( animate );
-
 				render();
-				stats.update();
 
 			}
 
@@ -126,3 +153,8 @@ import * as THREE from '../../build/three.module.js';
 				renderer.render( scene, camera );
 
 			}
+			
+			
+	
+			
+			
