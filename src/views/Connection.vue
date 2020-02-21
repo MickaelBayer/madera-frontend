@@ -13,7 +13,10 @@
       v-layout(row='', wrap='', justify-end='', class="btnConnexion")
         v-btn(outlined='', class="cancelForget" right=true, color="#409a1b", @click='forgetPwd = false') Annuler
         v-btn(outlined='', right=true, color="#409a1b", @click='clickForgetPwd') Valider
-</template>
+    v-alert(:type='resultLogin.status' width="100%" class="incorrectPwd" :icon="resultLogin.icon" v-if="resultLogin")
+      | {{resultLogin.msg}}
+
+  </template>
 
 <script>
 // eslint-disable-next-line import/no-cycle
@@ -28,14 +31,20 @@ export default {
       mail: null,
       password: null,
       mailForgetPwd: null,
-      forgetPwd: false
+      forgetPwd: false,
+      resultLogin: {}
     }
   },
   mounted() {
   },
   methods: {
-    clickLogin() {
-      userService.login(this.mail, this.password)
+    async clickLogin() {
+      this.resultLogin = await userService.login(this.mail, this.password)
+      await new Promise(resolve => {
+        setTimeout(() => {
+          this.resultLogin = null
+        }, 2000);
+      })
     },
     clickForgetPwd() {
       console.log('mot de passe oublié')
@@ -73,4 +82,7 @@ export default {
     font-weight: bold
     margin-bottom: 4rem
     font-size: 2.4rem
+  .incorrectPwd
+    position: absolute
+    top: 4.7rem
 </style>
