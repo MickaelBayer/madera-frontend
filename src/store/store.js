@@ -8,9 +8,7 @@ Vue.use(Vuex);
 
 const state = {
   displayBtnAccount: false,
-  login401: false,
 };
-
 
 const mutations = {
   displayMyAccount (state){
@@ -18,10 +16,6 @@ const mutations = {
   },
   hideMyAccount (state){
     state.displayBtnAccount = false;
-  },
-  seeLogin401 (state){
-    state.login401 = true;
-    setTimeout(function(){ state.login401 = false; }, 2000);
   }
 }
 
