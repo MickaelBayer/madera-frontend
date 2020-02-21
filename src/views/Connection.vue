@@ -36,6 +36,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit('hideMyAccount')
   },
   methods: {
     async clickLogin() {
