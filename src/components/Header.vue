@@ -17,7 +17,7 @@
       }
     },
     mounted() {
-      if(localStorage.getItem('user')) this.displayBtn = true
+      if(this.$store.state.user) this.displayBtn = true
     },
     methods: {
       goToMyAccount(){
