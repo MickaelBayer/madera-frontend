@@ -7,7 +7,8 @@ Vue.use(Vuex);
 
 
 const state = {
-  displayBtnAccount: false
+  displayBtnAccount: false,
+  user: null
 };
 
 
@@ -17,6 +18,12 @@ const mutations = {
   },
   hideMyAccount (state){
     state.displayBtnAccount = false;
+  },
+  setUser (state, user){
+    state.user = user
+  },
+  deleteUser (state){
+    state.user = null
   }
 }
 
