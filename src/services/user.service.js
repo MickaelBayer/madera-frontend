@@ -1,29 +1,28 @@
 import { router } from '../router'
 import { instance } from '../Api'
+import store from '../store/store'
 
 function logout() {
   // remove user from local storage to log user out
   localStorage.removeItem('user')
   instance.defaults.headers.common['Authorization'] = null
-  location.reload()
+  router.push('/login')
+  store.commit('hideMyAccount')
 }
 
 function login(mail, password) {
   instance.post('/login', {mail: mail, password: password})
   .then(response => {
     if (response.status === 200) {
+      store.commit('displayMyAccount')
       localStorage.setItem('user', JSON.stringify(response.data))
       instance.defaults.headers.common['Authorization'] = response.data.token
       router.push('/home')
-      location.reload()
     }
   })
   .catch(error => {
-    console.log(error)
-    if(error.status === 401 ) {
-      // auto logout if 401 response returned from api
-      logout()
-      router.push('/login')
+    if(error.response.status === 401 ) {
+      console.log('mot de passe incorrect')
     }
     else {
       console.log(error)
@@ -41,9 +40,9 @@ function signup(firstname, lastname, mail, password, phone, role) {
     })
     .catch(error => {
       console.log(error)
-      if(error.status === 401 ) {
+      if(error.response.status === 401 ) {
         console.log("erreur 401")
-      }else if(error.status === 500){
+      }else if(error.response.status === 500){
         console.log('erreur 500')
       }
       else {
@@ -57,7 +56,6 @@ const userService = {
   login,
   logout,
   signup
-  // getAll
 }
 
 export default userService
