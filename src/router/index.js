@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store/store'
 import connection from '../views/Connection.vue'
 import home from '../views/Home.vue'
 import myAccount from '../views/MyAccount.vue'
@@ -8,6 +9,7 @@ import userList from '../views/UserList';
 import projectList from '../views/ProjectList';
 import createProject from '../views/CreateProject';
 import addModule from '../views/AddModule';
+import projectCustomer from '../views/ProjectCustomer'
 
 Vue.use(VueRouter)
 
@@ -23,6 +25,7 @@ export const router = new VueRouter({
     { path: '/projectList', component: projectList },
     { path: '/createProject', component: createProject },
     { path: '/addModule', component: addModule },
+    { path: '/project/Customer', component: projectCustomer},
 
     // otherwise redirect to home
     //{ path: '*', redirect: '/' }
@@ -34,7 +37,7 @@ router.beforeEach((to, from, next) => {
   // TODO trier les pages qui sont accessible ou non avec connexion
   const publicPages = ['/login', '/']
   const authRequired = !publicPages.includes(to.path)
-  const loggedIn = localStorage.getItem('user')
+  const loggedIn = store.state.user
 
   if (authRequired && !loggedIn) {
     return next('/login')

@@ -4,10 +4,10 @@ import store from '../store/store'
 
 function logout() {
   // remove user from local storage to log user out
-  localStorage.removeItem('user')
   instance.defaults.headers.common['Authorization'] = null
-  router.push('/login')
   store.commit('hideMyAccount')
+  store.commit('deleteUser')
+  router.push('/login')
 }
 
 function login(mail, password) {
@@ -15,7 +15,7 @@ function login(mail, password) {
   .then(response => {
     if (response.status === 200) {
       store.commit('displayMyAccount')
-      localStorage.setItem('user', JSON.stringify(response.data))
+      store.commit('setUser', response.data)
       instance.defaults.headers.common['Authorization'] = response.data.token
       router.push('/home')
       return {
