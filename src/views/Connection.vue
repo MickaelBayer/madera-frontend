@@ -31,6 +31,8 @@ export default {
       forgetPwd: false
     }
   },
+  mounted() {
+  },
   methods: {
     clickLogin() {
       userService.login(this.mail, this.password)

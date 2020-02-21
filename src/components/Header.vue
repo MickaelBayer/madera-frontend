@@ -2,7 +2,7 @@
   .topBar(ref="header")
     .logoMadera
       img(src="../assets/logo.png" @click="goHome")
-    .btnMyAccount(v-if="displayBtn")
+    .btnMyAccount(v-if="$store.state.displayBtnAccount")
       v-btn(large=true color="#409a1b" style="color: white" @click="goToMyAccount") Mon compte
 </template>
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-app
-    Header
+    Header(ref="foo")
     router-view
 </template>
 
