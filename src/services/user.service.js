@@ -23,6 +23,7 @@ function login(mail, password) {
   .catch(error => {
     if(error.response.status === 401 ) {
       console.log('mot de passe incorrect')
+      store.commit('seeLogin401')
     }
     else {
       console.log(error)

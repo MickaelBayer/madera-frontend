@@ -13,7 +13,10 @@
       v-layout(row='', wrap='', justify-end='', class="btnConnexion")
         v-btn(outlined='', class="cancelForget" right=true, color="#409a1b", @click='forgetPwd = false') Annuler
         v-btn(outlined='', right=true, color="#409a1b", @click='clickForgetPwd') Valider
-</template>
+    v-alert(type='error' width="100%" class="incorrectPwd" icon="error" v-if="$store.state.login401")
+      | E-mail ou mot de passe incorrect
+
+  </template>
 
 <script>
 // eslint-disable-next-line import/no-cycle
@@ -73,4 +76,7 @@ export default {
     font-weight: bold
     margin-bottom: 4rem
     font-size: 2.4rem
+  .incorrectPwd
+    position: absolute
+    top: 4.7rem
 </style>
