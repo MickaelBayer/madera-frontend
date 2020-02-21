@@ -14,7 +14,7 @@
       v-text-field(v-model='newPwd2', type='password' label='Confirmation nouveau mot de passe')
       br
       v-layout(row='', wrap='', justify-end='', class="btnCreate")
-        v-btn(outlined='', right=true, color="#409a1b", @click='updUser()') Enregistrer
+        v-btn(outlined='', right=true, color="#409a1b", @click='updPassword()') Enregistrer
     v-btn(color="red" @click="logout" class="logoutBtn") Déconnexion
 </template>
 
@@ -33,6 +33,7 @@
         phone: null,
         mail: null,
         newPwd1: null,
+        user: null,
         newPwd2: null,
         emailRules: [
           value => (value || '').length <= 30 || 'Max 30 caractères',
@@ -43,8 +44,13 @@
         ],
       }
     },
-    mounted() {
-      console.log(this.$store.state.user)
+    async mounted() {
+      const id = this.$store.state.user.userID
+      this.user = await userService.getInfoById(id)
+      this.firstname = this.user.data.firstName
+      this.lastname = this.user.data.lastName
+      this.mail = this.user.data.mail
+      this.phone = this.user.data.phone
     },
     computed: {
     },
@@ -54,6 +60,9 @@
       },
       updUser(){
         // todo modifier les infos utilisateur
+      },
+      updPassword(){
+        // todo modifier le mot de passe
       }
     }
   }

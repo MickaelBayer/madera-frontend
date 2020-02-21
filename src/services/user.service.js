@@ -77,10 +77,15 @@ function signup(firstname, lastname, mail, password, phone, role) {
     })
 }
 
+function getInfoById(id) {
+  return instance.get(`/user/${id}`)
+}
+
 const userService = {
   login,
   logout,
-  signup
+  signup,
+  getInfoById
 }
 
 export default userService
