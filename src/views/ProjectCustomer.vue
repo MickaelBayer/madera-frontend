@@ -29,11 +29,11 @@
     methods: {
       redirectItem1(){
         //fomulaire creation client
-        this.$router.push('/addModule')
+        this.$router.push('/addCustomer')
       },
       redirectItem2(){
         //recherche clients existants
-        this.$router.push('/projectList')
+        this.$router.push('/listCustomers')
       }
     }
   }

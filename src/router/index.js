@@ -10,6 +10,8 @@ import projectList from '../views/ProjectList';
 import createProject from '../views/CreateProject';
 import addModule from '../views/AddModule';
 import projectCustomer from '../views/ProjectCustomer'
+import listCustomers from '../views/ListCustomers'
+import addCustomer from '../views/AddCustomer'
 import firstConnection from '../views/FirstConnection'
 
 Vue.use(VueRouter)
@@ -28,9 +30,12 @@ export const router = new VueRouter({
     { path: '/addModule', component: addModule },
     { path: '/project/Customer', component: projectCustomer},
     { path: '/login/firstConnection', component: firstConnection},
+    { path: '/projectCustomer', component: projectCustomer},
+    { path: '/listCustomers', component: listCustomers},
+    { path: '/addCustomer', component: addCustomer },
 
     // otherwise redirect to home
-    //{ path: '*', redirect: '/' }
+    { path: '*', redirect: '/' }
   ]
 })
 
