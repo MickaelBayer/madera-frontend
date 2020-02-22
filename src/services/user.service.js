@@ -117,12 +117,34 @@ function updPassword(password, id) {
     })
 }
 
+function updInfoUser(id, lastname, firstname, phone, mail) {
+  return instance.post('/user/upduserinfo', {id: id, lastName: lastname, firstName: firstname, phone: phone, mail: mail})
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Informations mise à jour'
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      return {
+        status: 'error',
+        icon: 'error',
+        msg: 'Erreur au niveau du server'
+      }
+    })
+}
+
 const userService = {
   login,
   logout,
   signup,
   getInfoById,
-  updPassword
+  updPassword,
+  updInfoUser
 }
 
 export default userService
