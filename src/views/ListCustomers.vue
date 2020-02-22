@@ -1,9 +1,9 @@
 <template>
-  <div class="home">
+  <div class="listCustomer">
     <v-layout child-flex>
       <v-card>
         <v-card-title>
-          Clients
+          Sélection d'un client
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -56,7 +56,7 @@
         headers: [
           { text: 'Nom', align: 'left', value: 'lastName' },
           { text: 'Prénom', align: 'left', value: 'firstName' },
-          { text: 'mail', align: 'left', value: 'mail' }
+          { text: 'Mail', align: 'left', value: 'mail' }
         ],
         customers: []
       }
@@ -90,42 +90,13 @@
 </script>
 
 <style lang="sass" scoped>
-  .home
+  .listCustomer
     height: 100%
     width: 100%
     display: flex
     flex-direction: row
     justify-content: center
     padding: 0.8rem
-  .zoneItem
-    display: flex
-    width: 80%
-  .homeItem
-    width: 100%
-    height: 100%
-    display: flex
-    justify-content: center
-    align-items: center
-  .item
-    background: #409a1b
-    height: 40vh
-    cursor: pointer
-    width: 40vh
-    border-radius: 0.8rem
-    display: flex
-    flex-direction: column
-    box-shadow: 7px 7px 20px 0 rgba(166,166,166,1)
-  .itemTitle
-    height: 8rem
-    color: white
-    display: flex
-    justify-content: center
-    align-items: center
-    font-size: 1.7rem
-    font-weight: bold
-  .itemImg
-    height: 80%
-    margin: 1rem 0
   .custom-highlight-row
     background-color: #409a1b
   .btnCreate
@@ -139,7 +110,6 @@
     vertical-align: left
     text-align: left
     cursor: pointer
-
   @media(max-width: 850px)
     .zoneItem
       flex-direction: column

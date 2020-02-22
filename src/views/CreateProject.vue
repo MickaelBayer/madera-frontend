@@ -1,5 +1,7 @@
 <template lang="pug">
-  .createProject CREER UN PROJET {{$store.state.customer}} {{$store.state.customer.mail}}
+  .createProject
+    | CREER UN PROJET
+    | {{$store.state.customer}}
 </template>
 
 
@@ -27,4 +29,7 @@
     height: 100%
     width: 100%
     display: flex
+    flex-direction: row
+    justify-content: center
+    padding: 0.8rem
 </style>
