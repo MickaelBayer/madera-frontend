@@ -10,6 +10,7 @@ import projectList from '../views/ProjectList';
 import createProject from '../views/CreateProject';
 import addModule from '../views/AddModule';
 import projectCustomer from '../views/ProjectCustomer'
+import firstConnection from '../views/FirstConnection'
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,7 @@ export const router = new VueRouter({
     { path: '/createProject', component: createProject },
     { path: '/addModule', component: addModule },
     { path: '/project/Customer', component: projectCustomer},
+    { path: '/login/firstConnection', component: firstConnection},
 
     // otherwise redirect to home
     //{ path: '*', redirect: '/' }
