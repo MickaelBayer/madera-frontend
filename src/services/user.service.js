@@ -81,11 +81,48 @@ function getInfoById(id) {
   return instance.get(`/user/${id}`)
 }
 
+function updPassword(password, id) {
+  return instance.post('/user/updpwd', { password: password, id: id})
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Mot de passe mis à jour avec succés ! Vous allez être déconnecté dans 5s.'
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect'
+        }
+      }else if(error.response.status === 500){
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur 500'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server'
+        }
+      }
+    })
+}
+
 const userService = {
   login,
   logout,
   signup,
-  getInfoById
+  getInfoById,
+  updPassword
 }
 
 export default userService
