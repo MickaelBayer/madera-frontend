@@ -7,6 +7,7 @@ function logout() {
   instance.defaults.headers.common['Authorization'] = null
   store.commit('hideMyAccount')
   store.commit('deleteUser')
+  store.commit('deleteCustomer')
   router.push('/login')
 }
 

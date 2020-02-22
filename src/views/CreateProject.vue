@@ -1,5 +1,5 @@
 <template lang="pug">
-  .createProject CREER UN PROJET
+  .createProject CREER UN PROJET {{$store.state.customer}} {{$store.state.customer.mail}}
 </template>
 
 

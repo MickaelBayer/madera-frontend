@@ -28,7 +28,6 @@ export const router = new VueRouter({
     { path: '/projectList', component: projectList },
     { path: '/createProject', component: createProject },
     { path: '/addModule', component: addModule },
-    { path: '/project/Customer', component: projectCustomer},
     { path: '/login/firstConnection', component: firstConnection},
     { path: '/projectCustomer', component: projectCustomer},
     { path: '/listCustomers', component: listCustomers},

@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 const state = {
   displayBtnAccount: false,
-  user: null
+  user: null,
+  customer: null,
 };
 
 
@@ -24,7 +25,13 @@ const mutations = {
   },
   deleteUser (state){
     state.user = null
-  }
+  },
+  setCustomer (state, customer){
+    state.customer = customer
+  },
+  deleteCustomer (state){
+    state.customer = null
+  },
 }
 
 export default new Vuex.Store({

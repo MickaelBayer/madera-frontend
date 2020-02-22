@@ -1,4 +1,5 @@
 import { instance } from '../Api'
+import store from '../store/store'
 
 function getAll() {
   return instance.get('/customer')
@@ -8,6 +9,7 @@ function create(firstname, lastname, phone, address, mail) {
   return instance.post('/customer', { firstName: firstname, lastName: lastname, phone: phone, address: address, mail: mail })
           .then(response => {
             if (response.status === 201) {
+              store.commit('setCustomer', response.data)
               return {
                 status: 'success',
                 icon: 'check_circle',
