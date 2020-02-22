@@ -1,54 +1,41 @@
 <template lang="pug">
-  .home
     .zoneItem
       .homeItem
         .item(@click="redirectItem1")
-          img(v-if="role===1" class="itemImg" src='../assets/add.svg')
-          img(v-else-if="role===2" class="itemImg" src='../assets/sketch.svg')
-          img(v-else class="itemImg" src='../assets/repair.svg')
-          .itemTitle {{itemTitle1}}
+          img(class="itemImg" src='../assets/add.svg')
+          .itemTitle Nouveau client
       .homeItem
         .item(@click="redirectItem2")
           img(class="itemImg" src='../assets/view.svg')
-          .itemTitle {{itemTitle2}}
+          .itemTitle Client existant
+      div {{ customers }}
 </template>
 
 
 <script>
   import router from '../router';
-  import state from '../store/store'
+  import customerService from '../services/customer.service'
   export default {
-    name: 'home',
+    name: 'listCustomers',
     components: {
     },
     data() {
       return {
-        role: Number(this.$store.state.user.userRole)
+        customers: []
       }
     },
-    computed: {
-      itemTitle1() {
-        if(this.role === 1) return 'Ajouter un utilisateur'
-        if(this.role === 2) return 'Créer un projet'
-        return 'Ajouter un modules'
-      },
-      itemTitle2() {
-        if(this.role === 1) return 'Consulter la liste des utilisateurs'
-        return 'Consulter la liste des projets'
-      }
-    },
-    mounted() {
-      this.role = Number(this.$store.state.user.userRole)
+    async mounted() {
+      const response = await customerService.getAll();
+      this.customers = response.data;
     },
     methods: {
       redirectItem1(){
-        if(this.role === 1) this.$router.push('/adduser')
-        else if (this.role === 2) this.$router.push('/projectCustomer')
-        else this.$router.push('/addModule')
+        //fomulaire creation client
+        this.$router.push('/addModule')
       },
       redirectItem2(){
-        if(this.role === 1) this.$router.push('/userlist')
-        else this.$router.push('/projectList')
+        //recherche clients existants
+        this.$router.push('/projectList')
       }
     }
   }

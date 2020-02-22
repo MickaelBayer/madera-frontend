@@ -47,6 +47,7 @@
     justify-content: center
     align-items: center
     height: 100%
+    cursor: pointer
 
   .logoMadera img
     height: 100%
