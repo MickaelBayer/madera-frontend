@@ -9,7 +9,7 @@
         v-btn(outlined='', right=true, color="#409a1b", @click='clickLogin') Connexion
     .form(v-if="forgetPwd")
       .titleForget Mot de passe oublié ?
-      v-text-field(v-model='mailForgetPwd', label='E-mail', required='')
+      v-text-field(v-model='mailForgetPwd', label='E-mail', required='', @keyup.enter="clickForgetPwd")
       v-layout(row='', wrap='', justify-end='', class="btnConnexion")
         v-btn(outlined='', class="cancelForget" right=true, color="#409a1b", @click='forgetPwd = false') Annuler
         v-btn(outlined='', right=true, color="#409a1b", @click='clickForgetPwd') Valider
@@ -47,10 +47,33 @@ export default {
         }, 2000);
       })
     },
-    clickForgetPwd() {
-      console.log('mot de passe oublié')
-      // todo appeler la fonction pour changer le mot de passe via email
-      this.forgetPwd = false
+    async clickForgetPwd() {
+      const resetPwd = await userService.resetPwd(this.mailForgetPwd)
+      if(resetPwd.data === 1) {
+        this.resultLogin = {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Un mail avec votre nouveau mot de passe vous a été envoyé'
+        }
+        await new Promise(resolve => {
+          setTimeout(() => {
+            this.resultLogin = null
+            this.mailForgetPwd = null
+            this.forgetPwd = false
+          }, 2000);
+        })
+      } else {
+        this.resultLogin = {
+          status: 'error',
+          icon: 'error',
+          msg: 'Mail incorrect'
+        }
+        await new Promise(resolve => {
+          setTimeout(() => {
+            this.resultLogin = null
+          }, 2000);
+        })
+      }
     }
   }
 }

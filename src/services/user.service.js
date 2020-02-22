@@ -42,7 +42,7 @@ function login(mail, password) {
 }
 
 function signup(firstname, lastname, mail, password, phone, role) {
-  return instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role})
+  return instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role, firstConnection: true})
     .then(response => {
       if (response.status === 201) {
         return {
@@ -138,13 +138,19 @@ function updInfoUser(id, lastname, firstname, phone, mail) {
     })
 }
 
+function resetPwd(email) {
+  return instance.get(`/user/resetmdpuser/${email}`)
+}
+
+
 const userService = {
   login,
   logout,
   signup,
   getInfoById,
   updPassword,
-  updInfoUser
+  updInfoUser,
+  resetPwd
 }
 
 export default userService
