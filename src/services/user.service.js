@@ -17,7 +17,11 @@ function login(mail, password) {
       store.commit('displayMyAccount')
       store.commit('setUser', response.data)
       instance.defaults.headers.common['Authorization'] = response.data.token
-      router.push('/home')
+      if(response.data.isFirstConnection === 'true') {
+        router.push('/login/firstConnection')
+      } else {
+        router.push('/home')
+      }
       return {
         status: 'success',
         icon: 'check_circle',
