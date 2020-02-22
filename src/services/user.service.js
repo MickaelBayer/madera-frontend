@@ -42,7 +42,7 @@ function login(mail, password) {
 }
 
 function signup(firstname, lastname, mail, password, phone, role) {
-  return instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role})
+  return instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role, firstConnection: true})
     .then(response => {
       if (response.status === 201) {
         return {
@@ -81,11 +81,76 @@ function getInfoById(id) {
   return instance.get(`/user/${id}`)
 }
 
+function updPassword(password, id) {
+  return instance.post('/user/updpwd', { password: password, id: id})
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Mot de passe mis à jour avec succés ! Vous allez être déconnecté dans 5s.'
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect'
+        }
+      }else if(error.response.status === 500){
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur 500'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server'
+        }
+      }
+    })
+}
+
+function updInfoUser(id, lastname, firstname, phone, mail) {
+  return instance.post('/user/upduserinfo', {id: id, lastName: lastname, firstName: firstname, phone: phone, mail: mail})
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Informations mise à jour'
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      return {
+        status: 'error',
+        icon: 'error',
+        msg: 'Erreur au niveau du server'
+      }
+    })
+}
+
+function resetPwd(email) {
+  return instance.get(`/user/resetmdpuser/${email}`)
+}
+
+
 const userService = {
   login,
   logout,
   signup,
-  getInfoById
+  getInfoById,
+  updPassword,
+  updInfoUser,
+  resetPwd
 }
 
 export default userService

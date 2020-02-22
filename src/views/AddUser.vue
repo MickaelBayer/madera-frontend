@@ -10,7 +10,7 @@
       v-layout(row='', wrap='', justify-end='', class="btnCreate")
         v-btn(outlined='', class="cancelCreate" right=true, color="#d92616", @click='backHome()') Annuler
         v-btn(outlined='', right=true, color="#409a1b", @click='createUser()') Enregistrer
-    v-alert(:type='resultAddUser.status' width="100%" class="successAddUser" :icon="resultAddUser.icon" v-if="resultAddUser")
+    v-alert(:type='resultAddUser.status' width="100%" class="alertAddUser" :icon="resultAddUser.icon" v-if="resultAddUser")
       | {{resultAddUser.msg}}
 </template>
 
@@ -103,7 +103,7 @@
     font-weight: bold
     margin-bottom: 4rem
     font-size: 2.4rem
-  .successAddUser
+  .alertAddUser
     position: absolute
     top: 4.7rem
 </style>
