@@ -46,7 +46,7 @@ function login(mail, password) {
 }
 
 function signup(firstname, lastname, mail, password, phone, role) {
-  return instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role, firstConnection: true})
+  return instance.post('/user/sign-up', {firstName: firstname, lastName: lastname, mail: mail, password: password, phone: phone, role: role, firstConnection: true, isActiv: true})
     .then(response => {
       if (response.status === 201) {
         return {
@@ -146,6 +146,31 @@ function resetPwd(email) {
   return instance.get(`/user/resetmdpuser/${email}`)
 }
 
+function getAll() {
+  return instance.get(`/user`)
+}
+
+function changeStateUser(id, activ) {
+  return instance.post('/user/changeStateUser', {id: id, isActiv: activ})
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Informations mise à jour'
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      return {
+        status: 'error',
+        icon: 'error',
+        msg: 'Erreur au niveau du server'
+      }
+    })
+}
+
 
 const userService = {
   login,
@@ -154,7 +179,9 @@ const userService = {
   getInfoById,
   updPassword,
   updInfoUser,
-  resetPwd
+  resetPwd,
+  getAll,
+  changeStateUser
 }
 
 export default userService
