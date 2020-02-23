@@ -30,11 +30,11 @@
       itemTitle1() {
         if(this.role === 1) return 'Ajouter un utilisateur'
         if(this.role === 2) return 'Créer un projet'
-        return 'Ajouter un modules'
+        return 'Les modules'
       },
       itemTitle2() {
-        if(this.role === 1) return 'Consulter la liste des utilisateurs'
-        return 'Consulter la liste des projets'
+        if(this.role === 1) return 'Les utilisateurs'
+        return 'Les projets'
       }
     },
     mounted() {
@@ -44,7 +44,7 @@
       redirectItem1(){
         if(this.role === 1) this.$router.push('/adduser')
         else if (this.role === 2) this.$router.push('/projectCustomer')
-        else this.$router.push('/addModule')
+        else this.$router.push('/listModules')
       },
       redirectItem2(){
         if(this.role === 1) this.$router.push('/userlist')

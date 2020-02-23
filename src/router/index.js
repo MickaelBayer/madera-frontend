@@ -13,6 +13,8 @@ import projectCustomer from '../views/ProjectCustomer'
 import listCustomers from '../views/ListCustomers'
 import addCustomer from '../views/AddCustomer'
 import firstConnection from '../views/FirstConnection'
+import listModules from '../views/ListModules'
+import listComponents from '../views/ListComponents'
 
 Vue.use(VueRouter)
 
@@ -32,6 +34,8 @@ export const router = new VueRouter({
     { path: '/projectCustomer', component: projectCustomer},
     { path: '/listCustomers', component: listCustomers},
     { path: '/addCustomer', component: addCustomer },
+    { path: '/listModules', component: listModules },
+    { path: '/listComponents', component: listComponents },
 
     // otherwise redirect to home
     { path: '*', redirect: '/' }
