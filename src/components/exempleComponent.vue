@@ -36,7 +36,10 @@ export default {
     test() {
       console.log('je suis un test')
     }
-  }
+  },
+  beforeDestroy(){
+
+  },
 }
 </script>
 

@@ -1,8 +1,12 @@
 <template lang="pug">
   .topBar(ref="header")
+    v-tabs(background-color='#e5dcd0', centered='', height='100%', v-if='$store.state.displayTabsBE', active-class='activeTabs', slider-color='#409a1b')
+      v-tab(large=true, color='blue darken-1', text='', @click='goListModules') Modules
+      v-tab(large=true, color='blue darken-1', text='', @click='goListComponents') Composants
+      v-tab(large=true, color='blue darken-1', text='', @click='') Cancel
     .logoMadera
       img(src="../assets/logo.png" @click="goHome")
-    .btnMyAccount(v-if="$store.state.displayBtnAccount")
+    .btnMyAccount(v-if="$store.state.user")
       v-btn(large=true color="#409a1b" style="color: white" @click="goToMyAccount") Mon compte
 </template>
 
@@ -13,7 +17,7 @@
     name: 'Header',
     data() {
       return {
-        displayBtn: false
+        displayBtn: false,
       }
     },
     mounted() {
@@ -25,6 +29,12 @@
       },
       goHome(){
         this.$router.push('/home')
+      },
+      goListModules(){
+        this.$router.push('/listModules')
+      },
+      goListComponents(){
+        this.$router.push('/listComponents')
       }
     }
   }
@@ -60,4 +70,7 @@
     justify-content: center
     align-items: center
     height: 100%
+
+  .activeTabs
+    color: #409a1b
 </style>

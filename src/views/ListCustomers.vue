@@ -18,6 +18,7 @@
           :items="customers"
           :search="search"
           hide-default-footer=''
+          :items-per-page='-1'
           item-key="mail"
         >
           <template v-slot:body="{ items }">
