@@ -33,13 +33,11 @@
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Cancel
                   v-btn(color='blue darken-1', text='', @click='save') Save
-        template(v-slot:item.action='{ item }')
-          v-icon.mr-2(small='', @click='editItem(item)')
-            | edit
-          v-icon(small='', @click='deleteItem(item)')
-            | delete
-        template(v-slot:no-data='')
-          v-btn(color='primary', @click='initialize') Reset
+        template(v-slot:item.glutenfree='{ item }')
+          label.container
+          input(type='checkbox', checked='checked', v-model='item.glutenfree')
+          span.checkmark
+
 </template>
 
 
@@ -65,7 +63,8 @@
           { text: 'Fat (g)', value: 'fat' },
           { text: 'Carbs (g)', value: 'carbs' },
           { text: 'Protein (g)', value: 'protein' },
-          { text: 'Actions', value: 'action', sortable: false },
+          { text: 'Iron (%)', value: 'iron' },
+          { text: 'Gluten-Free', value: 'glutenfree' },
         ],
         modules: [],
         desserts: [],
@@ -117,6 +116,8 @@
             fat: 6.0,
             carbs: 24,
             protein: 4.0,
+            iron: '1%',
+            glutenfree: true,
           },
           {
             name: 'Ice cream sandwich',
@@ -124,6 +125,8 @@
             fat: 9.0,
             carbs: 37,
             protein: 4.3,
+            iron: '1%',
+            glutenfree: false,
           },
           {
             name: 'Eclair',
@@ -131,20 +134,8 @@
             fat: 16.0,
             carbs: 23,
             protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
+            iron: '7%',
+            glutenfree: false,
           },
           {
             name: 'Jelly bean',
@@ -152,6 +143,8 @@
             fat: 0.0,
             carbs: 94,
             protein: 0.0,
+            iron: '0%',
+            glutenfree: true,
           },
           {
             name: 'Lollipop',
@@ -159,20 +152,8 @@
             fat: 0.2,
             carbs: 98,
             protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
+            iron: '2%',
+            glutenfree: true,
           },
           {
             name: 'KitKat',
@@ -180,76 +161,8 @@
             fat: 26.0,
             carbs: 65,
             protein: 7,
-          },
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
+            iron: '6%',
+            glutenfree: false,
           },
         ]
       },
@@ -328,4 +241,7 @@
   @media(max-width: 850px)
     .zoneItem
       flex-direction: column
+  input
+    width: 3rem
+    height: 3rem
 </style>
