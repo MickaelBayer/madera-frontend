@@ -3,7 +3,7 @@
     .titleUserList Gestion des utilisateurs
     .userListTable
       template
-        v-data-table.elevation-1(:headers='headers', :items='users', sort-by='calories')
+        v-data-table.elevation-1(:headers='headers', :items='users',:items-per-page='-1', sort-by='mail', hide-default-footer='')
           template(v-slot:top='')
             v-toolbar(flat='', color='white')
               v-dialog(v-model='dialog', max-width='500px')

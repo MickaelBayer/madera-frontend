@@ -14,20 +14,30 @@ function logout() {
 function login(mail, password) {
   return instance.post('/login', {mail: mail, password: password})
   .then(response => {
+    console.log(response)
     if (response.status === 200) {
       store.commit('displayMyAccount')
       store.commit('setUser', response.data)
       instance.defaults.headers.common['Authorization'] = response.data.token
-      if(response.data.isFirstConnection === 'true') {
-        router.push('/login/firstConnection')
+      if(response.data.isActiv === 'true'){
+        if(response.data.isFirstConnection === 'true') {
+          router.push('/login/firstConnection')
+        } else {
+          router.push('/home')
+        }
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Connexion réussie'
+        }
       } else {
-        router.push('/home')
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Connexion impossible, votre compte est désactivé.'
+        }
       }
-      return {
-        status: 'success',
-        icon: 'check_circle',
-        msg: 'Connexion réussie'
-      }
+
     }
   })
   .catch(error => {
