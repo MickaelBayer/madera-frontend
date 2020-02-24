@@ -43,7 +43,7 @@
     methods: {
       redirectItem1(){
         if(this.role === 1) this.$router.push('/adduser')
-        else if (this.role === 2) this.$router.push('/projectCustomer')
+        else if (this.role === 2) this.$router.push('/listCustomers')
         else this.$router.push('/listModules')
       },
       redirectItem2(){
