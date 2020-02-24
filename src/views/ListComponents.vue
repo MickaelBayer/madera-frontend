@@ -1,7 +1,7 @@
 <template lang="pug">
   .listComponent
     v-layout(child-flex='')
-      v-data-table.elevation-1(:headers='headers', :items='components', :search='search', sort-by='calories', no-results-text="fefe", :items-per-page='-1', hide-default-footer='')
+      v-data-table.elevation-1(item-key="id", :headers='headers', :items='components', :search='search', no-results-text="fefe", :items-per-page='-1', hide-default-footer='', show-select='', v-model='selected')
         template(v-slot:top='')
           v-toolbar(flat='', color='white')
             v-toolbar-title Composants
@@ -22,13 +22,9 @@
                       v-col(cols='12', sm='6', md='4')
                         v-text-field(v-model='editedItem.name', label='Nom du composant')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.calories', label='Calories')
+                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.fat', label='Fat (g)')
-                      v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.carbs', label='Carbs (g)')
-                      v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.protein', label='Protein (g)')
+                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family ? families[editedItem.family -1].specs : ""')
                 v-card-actions
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -54,6 +50,8 @@
       return {
         search: '',
         dialog: false,
+        resultSaveComponent: null,
+        selected: [],
         headers: [
           {
             text: 'Nom / Identifiant',
@@ -65,22 +63,23 @@
           { text: 'Actions', value: 'action', sortable: false },
         ],
         components: [],
+        families: [],
         editedIndex: -1,
         editedItem: {
           name: '',
-          family: 0,
-          specs: 0,
+          family: null,
+          specs: null,
         },
         defaultItem: {
           name: '',
-          family: 0,
-          specs: 0,
+          family: null,
+          specs: null,
         },
       }
     },
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'Nouveau composant' : 'Edition d\'un composant'
       },
     },
     watch: {
@@ -93,8 +92,10 @@
     },
     async mounted() {
       this.$store.commit('displayTabsBE')
-      const response = await moduleService.getComponents();
-      this.components = response.data;
+      const componentsResponse = await moduleService.getComponents();
+      this.components = componentsResponse.data
+      const familiesResponse = await moduleService.getFamilies();
+      this.families = familiesResponse.data
     },
     beforeDestroy(){
       this.$store.commit('hideTabsBE')
@@ -126,13 +127,29 @@
         }, 300)
       },
 
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.components[this.editedIndex], this.editedItem)
-        } else {
-          this.components.push(this.editedItem)
+      async save () {
+        console.log(this.editedItem)
+        if(this.editedItem.name && this.editedItem.family && this.editedItem.specs){
+          this.editedItem.family = this.families[this.editedItem.family - 1]
+          // edit
+          if (this.editedIndex > -1) {
+            Object.assign(this.components[this.editedIndex], this.editedItem)
+          } 
+          // new
+          else {
+            this.resultSaveComponent = await moduleService.saveComponent(this.editedItem)
+          }
+          this.close()
+          this.initialize()
         }
-        this.close()
+        else {
+        this.resultSaveComponent = {
+                                      status: 'error',
+                                      icon: 'error',
+                                      msg: 'Information(s) manquante(s)'
+                                    }
+        }
+        console.log(this.resultSaveComponent)
       },
       backHome() {
         this.$router.push('/home')
