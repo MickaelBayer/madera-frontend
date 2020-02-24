@@ -20,11 +20,15 @@
                   v-container
                     v-row
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.name', label='Nom du composant')
+                        v-text-field(v-model='editedItem.name', label='Nom du composant', required='')
                       v-col(cols='12', sm='6', md='4')
-                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature')
+                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature', required='')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[editedItem.family - 1] ? families[editedItem.family - 1].specs : ""')
+                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='')
+                      v-col(cols='12', sm='6', md='4')
+                        v-select(v-model='editedItem.provider', :items='providers', item-text='name', item-value='id', label='Fournisseur', required='')
+                      v-col(cols='12', sm='6', md='4')
+                        v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='')
                 v-card-actions
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -62,20 +66,28 @@
           { text: 'Famille / Nature', value: 'family.name' },
           { text: 'Spécifications', value: 'specs', align: 'right' },
           { text: 'Unités', value: 'family.specs',sortable: false },
+          { text: 'Gamme', value: 'ranges.name'},
+          { text: 'Fournisseur', value: 'provider.name' },
           { text: 'Actions', value: 'action', sortable: false },
         ],
         components: [],
         families: [],
+        providers: [],
+        ranges: [],
         editedIndex: -1,
         editedItem: {
           name: '',
           family: null,
           specs: null,
+          provider: null,
+          ranges: null,
         },
         defaultItem: {
           name: '',
           family: null,
           specs: null,
+          provider: null,
+          ranges: null,
         },
       }
     },
@@ -98,6 +110,10 @@
       this.components = componentsResponse.data
       const familiesResponse = await moduleService.getFamilies();
       this.families = familiesResponse.data
+      const providersResponse = await moduleService.getProviders();
+      this.providers = providersResponse.data
+      const rangesResponse = await moduleService.getRanges();
+      this.ranges = rangesResponse.data
     },
     beforeDestroy(){
       this.$store.commit('hideTabsBE')
@@ -107,12 +123,17 @@
         this.$store.commit('displayTabsBE')
         const response = await moduleService.getComponents();
         this.components = response.data;
+        const familiesResponse = await moduleService.getFamilies();
+        this.families = familiesResponse.data
+        const providersResponse = await moduleService.getProviders();
+        this.providers = providersResponse.data
+        const rangesResponse = await moduleService.getRanges();
+        this.ranges = rangesResponse.data
       },
 
       editItem (item) {
         this.editedIndex = this.components.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        console.log(this.editedItem)
         this.dialog = true
       },
 
@@ -137,18 +158,29 @@
       },
 
       async save () {
-        console.log(this.editedItem)
-        if(this.editedItem.name && this.editedItem.family && this.editedItem.specs){
-          // edit
+        if(this.editedItem.name && this.editedItem.family && this.editedItem.specs && this.editedItem.provider){
+          // Replace the id of the family by the object family
+          if (!isNaN(this.editedItem.family)) {
+            const editedItemFamily = this.editedItem.family
+            this.editedItem.family = this.families[this.families.findIndex(x => x.id === editedItemFamily)]
+          }
+          // Replace the id of the provider by the object provider
+          if (!isNaN(this.editedItem.provider)) {
+            const editedItemProvider = this.editedItem.provider
+            this.editedItem.provider = this.providers[this.providers.findIndex(x => x.id === editedItemProvider)]
+          }
+          // Replace the id of the ranges by the object ranges
+          if (!isNaN(this.editedItem.ranges)) {
+            const editedItemRanges = this.editedItem.ranges
+            this.editedItem.ranges = this.ranges[this.ranges.findIndex(x => x.id === editedItemRanges)]
+          }
+          // Edit
           if (this.editedIndex > -1) {
             this.resultSaveComponent = await moduleService.updateComponent(this.editedItem)
           } 
-          // new
+          // New
           else {
-            const editedItemFamily = this.editedItem.family
-            this.editedItem.family = this.families[this.editedItem.family - 1]
             this.resultSaveComponent = await moduleService.saveComponent(this.editedItem)
-            this.editedItem.family = editedItemFamily
           }
           this.initialize()
           this.close()
