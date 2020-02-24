@@ -21,19 +21,76 @@ function saveComponent(component) {
       }
     })
     .catch(error => {
-      console.log(error)
       if(error.response.status === 401 ) {
         return {
           status: 'error',
           icon: 'error',
-          msg: 'Paramètre incorrect'
+          msg: 'Paramètre incorrect.'
         }
       }
       else {
         return {
           status: 'error',
           icon: 'error',
-          msg: 'Erreur au niveau du server'
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
+function updateComponent(component) {
+  return instance.put('/component', component)
+    .then(response => {
+      if (response.status === 201) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Composant correctement mis à jour.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
+function deleteComponent(component) {
+  return instance.delete('/component/' + component.id)
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Composant correctement supprimé.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
         }
       }
     })
@@ -48,6 +105,8 @@ const moduleService = {
   getComponents,
   getFamilies,
   saveComponent,
+  updateComponent,
+  deleteComponent,
 }
 
 export default moduleService

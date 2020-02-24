@@ -1,7 +1,7 @@
 <template lang="pug">
   .listComponent
     v-layout(child-flex='')
-      v-data-table.elevation-1(item-key="id", :headers='headers', :items='components', :search='search', no-results-text="fefe", :items-per-page='-1', hide-default-footer='', show-select='', v-model='selected')
+      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by="name", :items='components', :search='search', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
         template(v-slot:top='')
           v-toolbar(flat='', color='white')
             v-toolbar-title Composants
@@ -24,7 +24,7 @@
                       v-col(cols='12', sm='6', md='4')
                         v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family ? families[editedItem.family -1].specs : ""')
+                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[editedItem.family - 1] ? families[editedItem.family - 1].specs : ""')
                 v-card-actions
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -36,6 +36,8 @@
             | delete
         template(v-slot:no-data='')
           v-btn(color='primary', @click='initialize') Reset
+    v-alert(:type='resultSaveComponent.status' width="100%" class="successAddComponent" :icon="resultSaveComponent.icon" v-if="resultSaveComponent")
+      | {{resultSaveComponent.msg}}
 </template>
 
 
@@ -51,7 +53,6 @@
         search: '',
         dialog: false,
         resultSaveComponent: null,
-        selected: [],
         headers: [
           {
             text: 'Nom / Identifiant',
@@ -59,7 +60,8 @@
             value: 'name',
           },
           { text: 'Famille / Nature', value: 'family.name' },
-          { text: 'Spécifications', value: 'specs'},
+          { text: 'Spécifications', value: 'specs', align: 'right' },
+          { text: 'Unités', value: 'family.specs',sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
         ],
         components: [],
@@ -105,18 +107,25 @@
         this.$store.commit('displayTabsBE')
         const response = await moduleService.getComponents();
         this.components = response.data;
-        console.log(this.components)
       },
 
       editItem (item) {
         this.editedIndex = this.components.indexOf(item)
         this.editedItem = Object.assign({}, item)
+        console.log(this.editedItem)
         this.dialog = true
       },
 
-      deleteItem (item) {
-        const index = this.components.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.components.splice(index, 1)
+      async deleteItem (item) {
+        if (confirm('Etes vous sûr de vouloir supprimer ce composant ?')) {
+          this.resultSaveComponent = await moduleService.deleteComponent(item)
+          this.initialize()
+          await new Promise(resolve => {
+            setTimeout(() => {
+              this.resultSaveComponent = null
+            }, 2000);
+          })
+        }
       },
 
       close () {
@@ -130,17 +139,19 @@
       async save () {
         console.log(this.editedItem)
         if(this.editedItem.name && this.editedItem.family && this.editedItem.specs){
-          this.editedItem.family = this.families[this.editedItem.family - 1]
           // edit
           if (this.editedIndex > -1) {
-            Object.assign(this.components[this.editedIndex], this.editedItem)
+            this.resultSaveComponent = await moduleService.updateComponent(this.editedItem)
           } 
           // new
           else {
+            const editedItemFamily = this.editedItem.family
+            this.editedItem.family = this.families[this.editedItem.family - 1]
             this.resultSaveComponent = await moduleService.saveComponent(this.editedItem)
+            this.editedItem.family = editedItemFamily
           }
-          this.close()
           this.initialize()
+          this.close()
         }
         else {
         this.resultSaveComponent = {
@@ -149,11 +160,13 @@
                                       msg: 'Information(s) manquante(s)'
                                     }
         }
-        console.log(this.resultSaveComponent)
+        await new Promise(resolve => {
+          setTimeout(() => {
+            this.resultSaveComponent = null
+          }, 2000);
+        })
       },
-      backHome() {
-        this.$router.push('/home')
-      },
+
     }
   }
 </script>
@@ -173,6 +186,15 @@
   .cancelCreate
     margin-right: 1rem
   .alertSelection
+    position: absolute
+    top: 4.7rem
+  .addComponent
+    display: flex
+    flex-direction: column
+    height: 100%
+    align-items: center
+    width: 100%
+  .successAddComponent
     position: absolute
     top: 4.7rem
   td
