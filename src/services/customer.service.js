@@ -42,9 +42,99 @@ function create(firstname, lastname, phone, address, mail) {
           })
 }
 
+function saveCustomer(customer) {
+  return instance.post('/customer', customer)
+    .then(response => {
+      if (response.status === 201) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Client correctement ajouté.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
+function updateCustomer(customer) {
+  return instance.put('/customer', customer)
+    .then(response => {
+      if (response.status === 201) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Client correctement mis à jour.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
+function deleteCustomer(customer) {
+  return instance.delete('/customer/' + customer.id)
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Client correctement supprimé.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
 const customerService = {
   getAll,
   create,
+  saveCustomer,
+  updateCustomer,
+  deleteCustomer,
 }
 
 export default customerService

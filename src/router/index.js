@@ -4,14 +4,12 @@ import store from '../store/store'
 import connection from '../views/Connection.vue'
 import home from '../views/Home.vue'
 import myAccount from '../views/MyAccount.vue'
-import addUser from '../views/AddUser';
-import userList from '../views/UserList';
-import projectList from '../views/ProjectList';
-import createProject from '../views/CreateProject';
-import addModule from '../views/AddModule';
-import projectCustomer from '../views/ProjectCustomer'
+import addUser from '../views/AddUser'
+import userList from '../views/UserList'
+import projectList from '../views/ProjectList'
+import createProject from '../views/CreateProject'
+import addModule from '../views/AddModule'
 import listCustomers from '../views/ListCustomers'
-import addCustomer from '../views/AddCustomer'
 import firstConnection from '../views/FirstConnection'
 import listModules from '../views/ListModules'
 import listComponents from '../views/ListComponents'
@@ -32,9 +30,7 @@ export const router = new VueRouter({
     { path: '/createProject', component: createProject },
     { path: '/addModule', component: addModule },
     { path: '/login/firstConnection', component: firstConnection},
-    { path: '/projectCustomer', component: projectCustomer},
     { path: '/listCustomers', component: listCustomers},
-    { path: '/addCustomer', component: addCustomer },
     { path: '/listModules', component: listModules },
     { path: '/listComponents', component: listComponents },
     { path: '/listProviders', component: listProviders},
