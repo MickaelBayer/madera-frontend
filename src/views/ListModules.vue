@@ -31,8 +31,8 @@
                         v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null')
                       v-col(cols='12')
                         v-textarea(v-model='editedItem.info', label='Informations', rows='2')
-                      v-col(cols='12', sm='6', md='4', v-for='componentFamily in componentsFamilies' , v-if='(editedItem.family !== null && editedItem.ranges !== null) && (components.filter(x => x.family.id === componentFamily.id)).length !== 0')
-                        v-select(v-model='editedItem.selectedComponents', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='')
+                      v-col(cols='12', sm='6', md='4', v-for='(componentFamily, index) in componentsFamilies' , v-if='(editedItem.family !== null && editedItem.ranges !== null) && (components.filter(x => x.family.id === componentFamily.id)).length !== 0')
+                        v-select(v-model='editedItem.selectedComponents[index]', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='', v-on:change='consoleLogSelected')
                 v-card-actions
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -139,6 +139,10 @@
         this.ranges = rangesResponse.data
         const compoFamResponse = await moduleService.getComponentsFamilies();
         this.componentsFamilies = compoFamResponse.data
+      },
+
+      consoleLogSelected(){
+        console.log(this.editedItem.selectedComponents)
       },
 
       async rangeSelected() {
