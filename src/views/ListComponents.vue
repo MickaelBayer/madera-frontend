@@ -22,13 +22,13 @@
                       v-col(cols='12', sm='6', md='4')
                         v-text-field(v-model='editedItem.name', label='Nom du composant', required='')
                       v-col(cols='12', sm='6', md='4')
-                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature', required='')
-                      v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='')
-                      v-col(cols='12', sm='6', md='4')
                         v-select(v-model='editedItem.provider', :items='providers', item-text='name', item-value='id', label='Fournisseur', required='')
                       v-col(cols='12', sm='6', md='4')
                         v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='')
+                      v-col(cols='12', sm='6', md='6')
+                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature', required='')
+                      v-col(cols='12', sm='6', md='6')
+                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null')
                 v-card-actions
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -108,7 +108,7 @@
       this.$store.commit('displayTabsBE')
       const componentsResponse = await moduleService.getComponents();
       this.components = componentsResponse.data
-      const familiesResponse = await moduleService.getFamilies();
+      const familiesResponse = await moduleService.getComponentsFamilies();
       this.families = familiesResponse.data
       const providersResponse = await moduleService.getProviders();
       this.providers = providersResponse.data
@@ -123,7 +123,7 @@
         this.$store.commit('displayTabsBE')
         const response = await moduleService.getComponents();
         this.components = response.data;
-        const familiesResponse = await moduleService.getFamilies();
+        const familiesResponse = await moduleService.getComponentsFamilies();
         this.families = familiesResponse.data
         const providersResponse = await moduleService.getProviders();
         this.providers = providersResponse.data

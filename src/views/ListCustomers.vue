@@ -34,7 +34,7 @@
                       <v-text-field v-model="editedItem.address" label="Adresse" required=""></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.mail" label="Mail" required=""></v-text-field>
+                      <v-text-field v-model="editedItem.mail" label="Mail" required="" :rules="emailRules"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field v-model="editedItem.phone" label="Telephone"></v-text-field>
@@ -124,6 +124,13 @@
           mail: null,
           phone: null,
         },
+        emailRules: [
+          value => (value || '').length <= 30 || 'Max 30 caractères',
+          value => {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return pattern.test(value) || 'E-mail invalide'
+          },
+        ],
       }
     },
     created () {
