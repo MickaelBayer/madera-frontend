@@ -1,12 +1,16 @@
 import { instance } from '../Api'
 import store from '../store/store'
 
-function getAll() {
+function getModules() {
   return instance.get('/module')
 }
 
 function getComponents() {
   return instance.get('/component')
+}
+
+function getComponentsWithFamiliesAndRange(moduleFamily, ranges){
+  return instance.get('/component/'+ moduleFamily + '/' + ranges)
 }
 
 function saveComponent(component) {
@@ -97,8 +101,12 @@ function deleteComponent(component) {
     })
 }
 
-function getFamilies() {
+function getComponentsFamilies() {
   return instance.get('/componentFamily')
+}
+
+function getModulesFamilies() {
+  return instance.get('/moduleFamily')
 }
 
 function getProviders() {
@@ -197,9 +205,11 @@ function getRanges() {
 }
 
 const moduleService = {
-  getAll,
-  getFamilies,
+  getModules,
+  getComponentsFamilies,
+  getModulesFamilies,
   getComponents,
+  getComponentsWithFamiliesAndRange,
   saveComponent,
   updateComponent,
   deleteComponent,

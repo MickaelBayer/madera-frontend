@@ -3,7 +3,6 @@
     v-tabs(background-color='#e5dcd0', centered='', height='100%', v-if='$store.state.displayTabsBE', active-class='activeTabs', slider-color='#409a1b')
       v-tab(large=true, color='blue darken-1', text='', @click='goListModules') Modules
       v-tab(large=true, color='blue darken-1', text='', @click='goListComponents') Composants
-      v-tab(large=true, color='blue darken-1', text='', @click='') Matériaux
       v-tab(large=true, color='blue darken-1', text='', @click='goListProviders') Fournisseurs
     .logoMadera
       img(src="../assets/logo.png" @click="goHome")

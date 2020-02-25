@@ -1,18 +1,18 @@
 <template lang="pug">
   .listModule
     v-layout(child-flex='')
-      v-data-table.elevation-1(:headers='headers', :items='desserts', :search='search', sort-by='calories', no-results-text="fefe", :items-per-page='-1', hide-default-footer='')
+      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by="name", :items='modules', :search='search', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
         template(v-slot:top='')
           v-toolbar(flat='', color='white')
-            v-toolbar-title My CRUD
+            v-toolbar-title Modules
             v-divider.mx-4(inset='', vertical='')
             v-spacer
-            v-text-field(v-model='search', append-icon='search', label='Search', single-line='', hide-details='')
+            v-text-field(v-model='search', append-icon='search', label='Rechercher', single-line='', hide-details='')
             v-spacer
             v-divider.mx-4(inset='', vertical='')
             v-dialog(v-model='dialog', max-width='1000px')
               template(v-slot:activator='{ on }')
-                v-btn.mb-2(color='primary', dark='', v-on='on') New Item
+                v-btn.mb-2(color='primary', dark='', v-on='on') Ajouter
               v-card
                 v-card-title
                   span.headline {{ formTitle }}
@@ -20,24 +20,32 @@
                   v-container
                     v-row
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.name', label='Dessert name')
+                        v-text-field(v-model='editedItem.name', label='Nom du module', required='')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.calories', label='Calories')
+                        v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='', v-on:change='rangeSelected')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.fat', label='Fat (g)')
-                      v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.carbs', label='Carbs (g)')
-                      v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.protein', label='Protein (g)')
+                        v-text-field(v-model='editedItem.startingPrice', label='Prix de base', required='', append-outer-icon='euros', align='right')
+                      v-col(cols='12', sm='6', md='6')
+                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature / Coupe', required='', v-on:change='familySelected')
+                      v-col(cols='12', sm='6', md='6')
+                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null')
+                      v-col(cols='12')
+                        v-textarea(v-model='editedItem.info', label='Informations', rows='2')
+                      v-col(cols='12', sm='6', md='4', v-for='componentFamily in componentsFamilies' , v-if='(editedItem.family !== null && editedItem.ranges !== null) && (components.filter(x => x.family.id === componentFamily.id)).length !== 0')
+                        v-select(v-model='editedItem.selectedComponents', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='')
                 v-card-actions
                   v-spacer
-                  v-btn(color='blue darken-1', text='', @click='close') Cancel
-                  v-btn(color='blue darken-1', text='', @click='save') Save
-        template(v-slot:item.glutenfree='{ item }')
-          label.container
-          input(type='checkbox', checked='checked', v-model='item.glutenfree')
-          span.checkmark
-
+                  v-btn(color='blue darken-1', text='', @click='close') Annuler
+                  v-btn(color='blue darken-1', text='', @click='save') Enregister
+        template(v-slot:item.action='{ item }')
+          v-icon.mr-2(small='', @click='editItem(item)')
+            | edit
+          v-icon(small='', @click='deleteItem(item)')
+            | delete
+        template(v-slot:no-data='')
+          v-btn(color='primary', @click='initialize') Reset
+    v-alert(:type='resultSaveModule.status' width="100%" class="successAddModule" :icon="resultSaveModule.icon" v-if="resultSaveModule")
+      | {{resultSaveModule.msg}}
 </template>
 
 
@@ -46,48 +54,56 @@
   import moduleService from '../services/module.service'
   export default {
     name: 'listModules',
-    components: {
+    modules: {
     },
     data() {
       return {
         search: '',
         dialog: false,
+        resultSaveModule: null,
         headers: [
           {
-            text: 'Dessert (100g serving)',
+            text: 'Nom / Identifiant',
             align: 'left',
-            sortable: false,
             value: 'name',
           },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' },
-          { text: 'Gluten-Free', value: 'glutenfree' },
+          { text: 'Nature', value: 'family.name' },
+          { text: 'Spécifications', value: 'specs', align: 'right' },
+          { text: 'Unités', value: 'family.specs',sortable: false },
+          { text: 'Gamme', value: 'ranges.name'},
+          { text: 'Actions', value: 'action', sortable: false },
         ],
         modules: [],
-        desserts: [],
+        families: [],
+        ranges: [],
+        components: [],
+        componentsFamilies: [],
         editedIndex: -1,
         editedItem: {
           name: '',
-          calories: 0,
-          fat: 0,
-          carbs: 0,
-          protein: 0,
+          family: null,
+          specs: null,
+          provider: null,
+          ranges: null,
+          selectedComponents: [],
+          startingPrice: null,
+          info: null,
         },
         defaultItem: {
           name: '',
-          calories: 0,
-          fat: 0,
-          carbs: 0,
-          protein: 0,
+          family: null,
+          specs: null,
+          provider: null,
+          ranges: null,
+          selectedComponents: [],
+          startingPrice: null,
+          info: null,
         },
       }
     },
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'Nouveau module' : 'Edition d\'un module'
       },
     },
     watch: {
@@ -100,82 +116,71 @@
     },
     async mounted() {
       this.$store.commit('displayTabsBE')
-      const response = await moduleService.getAll();
-      this.modules = response.data;
-      console.log(this.modules)
+      const modulesResponse = await moduleService.getModules();
+      this.modules = modulesResponse.data
+      const familiesResponse = await moduleService.getModulesFamilies();
+      this.families = familiesResponse.data
+      const rangesResponse = await moduleService.getRanges();
+      this.ranges = rangesResponse.data
+      const compoFamResponse = await moduleService.getComponentsFamilies();
+      this.componentsFamilies = compoFamResponse.data
     },
     beforeDestroy(){
       this.$store.commit('hideTabsBE')
     },
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1%',
-            glutenfree: true,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1%',
-            glutenfree: false,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7%',
-            glutenfree: false,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0%',
-            glutenfree: true,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2%',
-            glutenfree: true,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-            glutenfree: false,
-          },
-        ]
+      async initialize () {
+        this.$store.commit('displayTabsBE')
+        const modulesResponse = await moduleService.getModules();
+        this.modules = modulesResponse.data;
+        const familiesResponse = await moduleService.getModulesFamilies();
+        this.families = familiesResponse.data
+        const rangesResponse = await moduleService.getRanges();
+        this.ranges = rangesResponse.data
+        const compoFamResponse = await moduleService.getComponentsFamilies();
+        this.componentsFamilies = compoFamResponse.data
+      },
+
+      async rangeSelected() {
+        //check pour maj compo
+        this.editedItem.selectedComponents = []
+        if (this.editedItem.family !== null && this.editedItem.ranges !== null){
+          const response = await moduleService.getComponentsWithFamiliesAndRange(this.editedItem.family,
+                                                                                  this.editedItem.ranges)
+          this.components = response.data
+        }
+      },
+
+      async familySelected() {
+        //check pour maj compo
+        this.editedItem.selectedComponents = []
+        if (this.editedItem.family !== null && this.editedItem.ranges !== null){
+          const response = await moduleService.getComponentsWithFamiliesAndRange(this.editedItem.family,
+                                                                                  this.editedItem.ranges)
+          this.components = response.data
+        }
+      },
+
+      isRangesAndFamilySelected(){
+        return this.editedItem.ranges !== null && this.editedItem.family !== null 
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.modules.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+      async deleteItem (item) {
+        if (confirm('Etes vous sûr de vouloir supprimer ce module ?')) {
+          this.resultSaveModule = await moduleService.deleteModule(item)
+          this.initialize()
+          await new Promise(resolve => {
+            setTimeout(() => {
+              this.resultSaveModule = null
+            }, 2000);
+          })
+        }
       },
 
       close () {
@@ -186,33 +191,43 @@
         }, 300)
       },
 
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
-      },
-      backHome() {
-        this.$router.push('/home')
-      },
-      handleClick(value){
-        this.selectedRow = value
-      },
-      validateCustomer(){
-        if(!this.selectedRow){
-          this.isAlertShowned = true
-          setTimeout(() => {
-              this.isAlertShowned = false
-          }, 2000)
-          return
+      async save () {
+        if(this.editedItem.name && this.editedItem.family && this.editedItem.specs && this.editedItem.provider){
+          // Replace the id of the family by the object family
+          if (!isNaN(this.editedItem.family)) {
+            const editedItemFamily = this.editedItem.family
+            this.editedItem.family = this.families[this.families.findIndex(x => x.id === editedItemFamily)]
+          }
+          // Replace the id of the ranges by the object ranges
+          if (!isNaN(this.editedItem.ranges)) {
+            const editedItemRanges = this.editedItem.ranges
+            this.editedItem.ranges = this.ranges[this.ranges.findIndex(x => x.id === editedItemRanges)]
+          }
+          // Edit
+          if (this.editedIndex > -1) {
+            this.resultSaveModule = await moduleService.updateModule(this.editedItem)
+          } 
+          // New
+          else {
+            this.resultSaveModule = await moduleService.saveModule(this.editedItem)
+          }
+          this.initialize()
+          this.close()
         }
         else {
-          this.$store.commit('setCustomer', this.selectedRow)
-          this.$router.push('/createProject')
+        this.resultSaveModule = {
+                                      status: 'error',
+                                      icon: 'error',
+                                      msg: 'Information(s) manquante(s)'
+                                    }
         }
+        await new Promise(resolve => {
+          setTimeout(() => {
+            this.resultSaveModule = null
+          }, 2000);
+        })
       },
+
     }
   }
 </script>
@@ -234,6 +249,15 @@
   .alertSelection
     position: absolute
     top: 4.7rem
+  .addModule
+    display: flex
+    flex-direction: column
+    height: 100%
+    align-items: center
+    width: 100%
+  .successAddModule
+    position: absolute
+    top: 4.7rem
   td
     vertical-align: left
     text-align: left
@@ -241,7 +265,4 @@
   @media(max-width: 850px)
     .zoneItem
       flex-direction: column
-  input
-    width: 3rem
-    height: 3rem
 </style>
