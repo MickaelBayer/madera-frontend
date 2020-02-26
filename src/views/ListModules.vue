@@ -25,14 +25,16 @@
                         v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='', v-on:change='rangeSelected')
                       v-col(cols='12', sm='6', md='4')
                         v-text-field(v-model='editedItem.startingPrice', label='Prix de base', required='', append-outer-icon='euros', align='right')
-                      v-col(cols='12', sm='6', md='6')
+                      v-col(cols='12', sm='6', md='4')
+                        v-select(v-model='editedItem.cctp', :items='cctps', item-text='name', item-value='id', label='CCTP', required='')
+                      v-col(cols='12', sm='6', md='4')
                         v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature / Coupe', required='', v-on:change='familySelected')
-                      v-col(cols='12', sm='6', md='6')
+                      v-col(cols='12', sm='6', md='4')
                         v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null')
                       v-col(cols='12')
                         v-textarea(v-model='editedItem.info', label='Informations', rows='2')
-                      v-col(cols='12', sm='6', md='4', v-for='(componentFamily, index) in componentsFamilies' , v-if='(editedItem.family !== null && editedItem.ranges !== null) && (components.filter(x => x.family.id === componentFamily.id)).length !== 0')
-                        v-select(v-model='editedItem.selectedComponents[index]', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='', v-on:change='consoleLogSelected')
+                      v-col(cols='12', sm='6', md='4', v-for='(componentFamily, index) in componentsFamilies' , v-if='(editedItem.family !== null && editedItem.ranges !== null) && ((components.filter(x => x.family.id === componentFamily.id)).length !== 0)', :key='index')
+                        v-select(v-model='editedItem.selectedComponents[index]', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='', v-on:change='getLog')
                 v-card-actions
                   v-spacer
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -76,28 +78,29 @@
         modules: [],
         families: [],
         ranges: [],
+        cctps: [],
         components: [],
         componentsFamilies: [],
         editedIndex: -1,
         editedItem: {
-          name: '',
+          name: null,
+          ranges: null,
+          startingPrice: null,
           family: null,
           specs: null,
-          provider: null,
-          ranges: null,
-          selectedComponents: [],
-          startingPrice: null,
           info: null,
+          cctp: null,
+          selectedComponents: [],
         },
         defaultItem: {
-          name: '',
+          name: null,
+          ranges: null,
+          startingPrice: null,
           family: null,
           specs: null,
-          provider: null,
-          ranges: null,
-          selectedComponents: [],
-          startingPrice: null,
           info: null,
+          cctp: null,
+          selectedComponents: [],
         },
       }
     },
@@ -118,12 +121,17 @@
       this.$store.commit('displayTabsBE')
       const modulesResponse = await moduleService.getModules();
       this.modules = modulesResponse.data
+      this.modules.forEach(module => {
+        module.selectedComponents = []
+      });
       const familiesResponse = await moduleService.getModulesFamilies();
       this.families = familiesResponse.data
       const rangesResponse = await moduleService.getRanges();
       this.ranges = rangesResponse.data
       const compoFamResponse = await moduleService.getComponentsFamilies();
       this.componentsFamilies = compoFamResponse.data
+      const cctpsResponse = await moduleService.getCctps();
+      this.cctps = cctpsResponse.data
     },
     beforeDestroy(){
       this.$store.commit('hideTabsBE')
@@ -139,10 +147,8 @@
         this.ranges = rangesResponse.data
         const compoFamResponse = await moduleService.getComponentsFamilies();
         this.componentsFamilies = compoFamResponse.data
-      },
-
-      consoleLogSelected(){
-        console.log(this.editedItem.selectedComponents)
+        const cctpsResponse = await moduleService.getCctps();
+        this.cctps = cctpsResponse.data
       },
 
       async rangeSelected() {
@@ -165,14 +171,40 @@
         }
       },
 
+      getLog(){
+        console.log(this.editedItem.selectedComponents)
+      },
+
       isRangesAndFamilySelected(){
         return this.editedItem.ranges !== null && this.editedItem.family !== null 
       },
 
-      editItem (item) {
+      async editItem (item) {
         this.editedIndex = this.modules.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        console.log(this.editedItem)
+        this.editedItem.cctp = this.editedItem.cctp.id
+        this.editedItem.ranges = this.editedItem.ranges.id
+        this.editedItem.family = this.editedItem.family.id
+        moduleService.getComponentByModule(this.editedItem)
+        .then(
+          response => {
+            this.editedItem.selectedComponents = response.data
+            const newSelectedTab = []
+            for(let index = 0; index < this.componentsFamilies.length ; index++ ){
+              this.editedItem.selectedComponents.forEach(compo => {
+                console.log(compo.family.id)
+                if (this.componentsFamilies[index].id === compo.family.id) {
+                  console.log(compo.id)
+                  newSelectedTab[index] = compo.id
+                }
+              })
+            }
+            this.editedItem.selectedComponents = newSelectedTab
+            console.log(this.editedItem)
+            this.dialog = true
+          }
+        )
       },
 
       async deleteItem (item) {
@@ -196,7 +228,14 @@
       },
 
       async save () {
-        if(this.editedItem.name && this.editedItem.family && this.editedItem.specs && this.editedItem.provider){
+        if(this.editedItem.name
+           && this.editedItem.ranges
+           && this.editedItem.startingPrice
+           && this.editedItem.family
+           && this.editedItem.specs
+           && this.editedItem.cctp
+           && this.editedItem.selectedComponents.length !== 0
+           ){
           // Replace the id of the family by the object family
           if (!isNaN(this.editedItem.family)) {
             const editedItemFamily = this.editedItem.family
@@ -207,6 +246,19 @@
             const editedItemRanges = this.editedItem.ranges
             this.editedItem.ranges = this.ranges[this.ranges.findIndex(x => x.id === editedItemRanges)]
           }
+          // Replace the id of the cctp by the object cctp
+          if (!isNaN(this.editedItem.cctp)) {
+            const editedItemCctp = this.editedItem.cctp
+            this.editedItem.cctp = this.cctps[this.cctps.findIndex(x => x.id === editedItemCctp)]
+          }
+          // Replace the ids of the componenent in selectedComponents
+          const selectedComponentsModif = []
+          this.editedItem.selectedComponents.forEach(component => {
+            if (component !== null) {
+              selectedComponentsModif.push(this.components[this.components.findIndex(x => x.id === component)])
+            }
+          });
+          this.editedItem.selectedComponents = selectedComponentsModif
           // Edit
           if (this.editedIndex > -1) {
             this.resultSaveModule = await moduleService.updateModule(this.editedItem)
