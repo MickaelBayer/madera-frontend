@@ -66,8 +66,8 @@
                 <td>{{ item.firstName }}</td>
                 <td>{{ item.mail }}</td>
                 <td>
-                  <v-icon class="mr-2" small="" @click="editItem(item)">edit</v-icon>
-                  <v-icon small="" @click="deleteItem(item)">delete</v-icon>
+                  <v-icon class="mr-2" x-large @click="editItem(item)">edit</v-icon>
+                  <v-icon x-large @click="deleteItem(item)">delete</v-icon>
                 </td>
               </tr>
             </tbody>

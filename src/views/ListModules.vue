@@ -41,13 +41,13 @@
                   v-btn(color='blue darken-1', text='', @click='close', v-if='editedIndex === -1') Annuler
                   v-btn(color='blue darken-1', text='', @click='save', v-if='editedIndex === -1') Enregister
         template(v-slot:item.action='{ item }')
-          v-icon.mr-2(@click='editItem(item)')
+          v-icon.mr-2(@click='editItem(item)', x-large='')
             | description
-          v-icon.mr-2(@click='desactivate(item)', v-if='item.active')
+          v-icon.mr-2(@click='desactivate(item)', v-if='item.active', x-large='')
             | lock_open
-          v-icon.mr-2(@click='activate(item)', v-if='!item.active')
+          v-icon.mr-2(@click='activate(item)', v-if='!item.active', x-large='')
             | lock
-          v-icon(@click='deleteItem(item)')
+          v-icon(@click='deleteItem(item)', x-large='')
             | delete
         template(v-slot:no-data='')
           v-btn(color='primary', @click='initialize') Reset
