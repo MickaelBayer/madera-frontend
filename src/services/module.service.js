@@ -209,15 +209,6 @@ function getRanges() {
 }
 
 function saveModule(module) {
-  console.log({ name: module.name,
-    startingPrice: module.startingPrice,
-    sepcs: module.sepcs,
-    cctp: module.cctp,
-    info: module.info,
-    ranges: module.ranges,
-    family: module.family,
-    components: module.selectedComponents
-  })
   return instance.post('/module', { name: module.name,
                                     startingPrice: module.startingPrice,
                                     specs: module.specs,
@@ -225,7 +216,7 @@ function saveModule(module) {
                                     info: module.info,
                                     ranges: module.ranges,
                                     family: module.family,
-                                    components: module.selectedComponents
+                                    components: module.selectedComponents,
                                   })
     .then(response => {
       if (response.status === 201) {
@@ -233,6 +224,43 @@ function saveModule(module) {
           status: 'success',
           icon: 'check_circle',
           msg: 'Module correctement ajouté.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
+function updateIsActive(module, isActive) {
+  // let uri;
+  // if (isActive) {
+  //   uri = '/module/' + module.id + '/activate'
+  // }
+  // else {
+  //   uri = '/module/' + module.id + '/desactivate'
+  // }
+  module.active = isActive
+  return instance.put('/module', module)
+    .then(response => {
+      if (response.status === 201) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Module correctement mis à jour.'
         }
       }
     })
@@ -305,6 +333,7 @@ const moduleService = {
   saveModule,
   deleteModule,
   getComponentByModule,
+  updateIsActive,
 }
 
 export default moduleService

@@ -38,6 +38,7 @@
       }
     },
     mounted() {
+      this.$store.commit('hideTabsBE')
       this.role = Number(this.$store.state.user.userRole)
     },
     methods: {
