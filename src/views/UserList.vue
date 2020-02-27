@@ -26,7 +26,7 @@
                     v-btn(color='blue darken-1', text='', @click='close') Cancel
                     v-btn(color='blue darken-1', text='', @click='save') Save
           template(v-slot:item.action='{ item }')
-            v-icon.mr-2(@click='editItem(item)', large="")
+            v-icon.mr-2(@click='editItem(item)', x-large="")
               | edit
             v-icon(@click='changeState(item, false)', v-if='item.isActiv' x-large="")
               | lock_open
