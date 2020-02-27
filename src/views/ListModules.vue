@@ -20,26 +20,29 @@
                   v-container
                     v-row
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.name', label='Nom du module', required='')
+                        v-text-field(v-model='editedItem.name', label='Nom du module', required='', :disabled='editedIndex !== -1')
                       v-col(cols='12', sm='6', md='4')
-                        v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='', v-on:change='rangeSelected')
+                        v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='', v-on:change='rangeSelected', :disabled='editedIndex !== -1')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.startingPrice', label='Prix de base', required='', append-outer-icon='euros', align='right')
+                        v-text-field(v-model='editedItem.startingPrice', label='Prix de base', required='', append-outer-icon='euros', align='right', :disabled='editedIndex !== -1')
                       v-col(cols='12', sm='6', md='4')
-                        v-select(v-model='editedItem.cctp', :items='cctps', item-text='name', item-value='id', label='CCTP', required='')
+                        v-select(v-model='editedItem.cctp', :items='cctps', item-text='name', item-value='id', label='CCTP', required='', :disabled='editedIndex !== -1')
                       v-col(cols='12', sm='6', md='4')
-                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature / Coupe', required='', v-on:change='familySelected')
+                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature / Coupe', required='', v-on:change='familySelected', :disabled='editedIndex !== -1')
                       v-col(cols='12', sm='6', md='4')
-                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null')
+                        v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null || editedIndex !== -1')
                       v-col(cols='12')
-                        v-textarea(v-model='editedItem.info', label='Informations', rows='2')
+                        v-textarea(v-model='editedItem.info', label='Informations', rows='2', :disabled='editedIndex !== -1')
                       v-col(cols='12', sm='6', md='4', v-for='(componentFamily, index) in componentsFamilies' , v-if='(editedItem.family !== null && editedItem.ranges !== null) && ((components.filter(x => x.family.id === componentFamily.id)).length !== 0)', :key='index')
-                        v-select(v-model='editedItem.selectedComponents[index]', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='', v-on:change='getLog')
+                        v-select(v-model='editedItem.selectedComponents[index]', :items='components.filter(x => x.family.id === componentFamily.id)', item-text='name', item-value='id', :label='componentFamily.name', required='', v-on:change='getLog', :disabled='editedIndex !== -1')
                 v-card-actions
                   v-spacer
-                  v-btn(color='blue darken-1', text='', @click='close') Annuler
-                  v-btn(color='blue darken-1', text='', @click='save') Enregister
+                  v-btn(color='blue darken-1', text='', @click='close', v-if='editedIndex !== -1') Fermer
+                  v-btn(color='blue darken-1', text='', @click='close', v-if='editedIndex === -1') Annuler
+                  v-btn(color='blue darken-1', text='', @click='save', v-if='editedIndex === -1') Enregister
         template(v-slot:item.action='{ item }')
+          v-icon.mr-2(@click='editItem(item)')
+            | description
           v-icon.mr-2(@click='desactivate(item)', v-if='item.active')
             | lock_open
           v-icon.mr-2(@click='activate(item)', v-if='!item.active')
@@ -143,6 +146,9 @@
         this.$store.commit('displayTabsBE')
         const modulesResponse = await moduleService.getModules();
         this.modules = modulesResponse.data;
+        this.modules.forEach(module => {
+                module.selectedComponents = []
+              });
         const familiesResponse = await moduleService.getModulesFamilies();
         this.families = familiesResponse.data
         const rangesResponse = await moduleService.getRanges();
@@ -201,32 +207,13 @@
         })
       },
 
-      async editItem (item) {
+      async editItem(item) {
         this.editedIndex = this.modules.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        console.log(this.editedItem)
         this.editedItem.cctp = this.editedItem.cctp.id
         this.editedItem.ranges = this.editedItem.ranges.id
         this.editedItem.family = this.editedItem.family.id
-        moduleService.getComponentByModule(this.editedItem)
-        .then(
-          response => {
-            this.editedItem.selectedComponents = response.data
-            const newSelectedTab = []
-            for(let index = 0; index < this.componentsFamilies.length ; index++ ){
-              this.editedItem.selectedComponents.forEach(compo => {
-                console.log(compo.family.id)
-                if (this.componentsFamilies[index].id === compo.family.id) {
-                  console.log(compo.id)
-                  newSelectedTab[index] = compo.id
-                }
-              })
-            }
-            this.editedItem.selectedComponents = newSelectedTab
-            console.log(this.editedItem)
-            this.dialog = true
-          }
-        )
+        this.dialog = true
       },
 
       async deleteItem (item) {
