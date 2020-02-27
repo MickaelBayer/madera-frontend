@@ -30,9 +30,9 @@
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
                   v-btn(color='blue darken-1', text='', @click='save') Enregister
         template(v-slot:item.action='{ item }')
-          v-icon.mr-2(small='', @click='editItem(item)')
+          v-icon.mr-2(@click='editItem(item)')
             | edit
-          v-icon(small='', @click='deleteItem(item)')
+          v-icon(@click='deleteItem(item)')
             | delete
         template(v-slot:no-data='')
           v-btn(color='primary', @click='initialize') Reset

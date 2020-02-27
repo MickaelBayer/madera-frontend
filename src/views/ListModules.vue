@@ -40,9 +40,11 @@
                   v-btn(color='blue darken-1', text='', @click='close') Annuler
                   v-btn(color='blue darken-1', text='', @click='save') Enregister
         template(v-slot:item.action='{ item }')
-          v-icon.mr-2(small='', @click='editItem(item)')
-            | edit
-          v-icon(small='', @click='deleteItem(item)')
+          v-icon.mr-2(@click='desactivate(item)', v-if='item.active')
+            | lock_open
+          v-icon.mr-2(@click='activate(item)', v-if='!item.active')
+            | lock
+          v-icon(@click='deleteItem(item)')
             | delete
         template(v-slot:no-data='')
           v-btn(color='primary', @click='initialize') Reset
@@ -177,6 +179,26 @@
 
       isRangesAndFamilySelected(){
         return this.editedItem.ranges !== null && this.editedItem.family !== null 
+      },
+
+      async activate(item) {
+        this.resultSaveModule = await moduleService.updateIsActive(item, true)
+        this.initialize()
+        await new Promise(resolve => {
+          setTimeout(() => {
+            this.resultSaveModule = null
+          }, 2000);
+        })
+      },
+
+      async desactivate(item) {
+        this.resultSaveModule = await moduleService.updateIsActive(item, false)
+        this.initialize()
+        await new Promise(resolve => {
+          setTimeout(() => {
+            this.resultSaveModule = null
+          }, 2000);
+        })
       },
 
       async editItem (item) {
