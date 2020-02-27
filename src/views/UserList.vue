@@ -26,12 +26,12 @@
                     v-btn(color='blue darken-1', text='', @click='close') Cancel
                     v-btn(color='blue darken-1', text='', @click='save') Save
           template(v-slot:item.action='{ item }')
-            v-btn(@click='editItem(item)' color='#a17e54' class="btnUpd")
-              | Modifier
-            v-btn(@click='changeState(item, false)' v-if="item.isActiv" color="red")
-              | Désactiver
-            v-btn(@click='changeState(item, true)' v-if="!item.isActiv" color="green")
-              | Activer
+            v-icon.mr-2(@click='editItem(item)', large="")
+              | edit
+            v-icon(@click='changeState(item, false)', v-if='item.isActiv' x-large="")
+              | lock_open
+            v-icon(@click='changeState(item, true)', v-if='!item.isActiv' x-large="")
+              | lock
           template(v-slot:no-data='')
             v-btn(color='primary', @click='initialize') Reset
     v-alert(:type='resultRequest.status' width="100%" class="alertUserList" :icon="resultRequest.icon" v-if="resultRequest")
@@ -105,8 +105,7 @@
 
       async changeState (item, activ) {
         this.resultRequest = await userService.changeStateUser(item.id, activ)
-        location.reload()
-        Object.assign(this.users[this.editedIndex], this.editedItem)
+        this.initialize()
         await new Promise(resolve => {
           setTimeout(() => {
             this.resultRequest = null
