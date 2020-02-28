@@ -106,7 +106,7 @@ import { TextureLoader } from '../../build/three.module.js';
 					}
 
 				} );
-				document.getElementById('Wall').addEventListener("click", addCube);
+				document.getElementById('Wall').addEventListener("click", addWall);
 
 				document.getElementById('mouve').addEventListener("click", mouveForm);
 
@@ -145,7 +145,7 @@ import { TextureLoader } from '../../build/three.module.js';
 			}
 		
 			
-			function addCube() {
+			function addWall() {
 			
 				var spotLight = new THREE.SpotLight( 0xffffff );
 				spotLight.position.set( 1000, 1000, 1000 );
@@ -161,8 +161,15 @@ import { TextureLoader } from '../../build/three.module.js';
 				
 				scene.add( spotLight );
 
-				var geometry = new THREE.BoxBufferGeometry( 100, 100, 100 );
-				var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://cdn.shoplightspeed.com/shops/606169/files/14835684/le-marche-du-bois-k-le-planche-murale-autocollante.jpg") });
+				var wallSize = document.getElementById("wallSize");
+				var wallTexture = document.getElementById("wallTexture");
+				var WallSizeSelect = wallSize.options[wallSize.selectedIndex].value;
+				var WallTextureSelect = wallTexture.options[wallTexture.selectedIndex].value;
+
+				alert(WallSizeSelect);
+				alert(WallTextureSelect);
+				var geometry = new THREE.BoxBufferGeometry( WallSizeSelect, 300, 100 );
+				var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(WallTextureSelect) });
 				var cube = new THREE.Mesh(geometry, material);
 
 				cube.position.set(0, 100, 0);

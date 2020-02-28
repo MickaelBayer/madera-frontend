@@ -1,23 +1,17 @@
-<template lang="pug">
-  .home
-    HelloWorld(:msg="msg")
-    exemple-component
+ <template lang="pug">
+ 
+ .img <a href="#"><img v-bind:src="img" alt="" class="logo"></a>
+
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
-import exempleComponent from '@/components/exempleComponent.vue'
-
+const imgLink = require('../img/Madera.png')
 export default {
-  name: 'home',
-  components: {
-    HelloWorld,
-    exempleComponent
-  },
-  data() {
-    return {
-      msg: 'Welcome to Madera Front'
+    name: 'onepage',
+    data(){
+        return{
+            img: imgLink,
+        }
     }
-  }
 }
 </script>
