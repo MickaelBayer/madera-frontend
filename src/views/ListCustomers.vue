@@ -237,7 +237,7 @@
     justify-content: center
     padding: 0.8rem
   .custom-highlight-row
-    background-color: #409a1b
+    background-color: #409a1b !important
   .btnCreate
     margin-top: 3vh
   .cancelCreate
