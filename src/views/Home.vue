@@ -49,7 +49,7 @@
       },
       redirectItem2(){
         if(this.role === 1) this.$router.push('/userlist')
-        else this.$router.push('/projectList')
+        else this.$router.push('/listProjects')
       }
     }
   }

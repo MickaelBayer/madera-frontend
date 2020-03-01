@@ -18,7 +18,6 @@ function getComponentsWithFamiliesAndRange(moduleFamily, ranges){
 }
 
 function saveComponent(component) {
-  console.log(component)
   return instance.post('/component', component)
     .then(response => {
       if (response.status === 201) {
