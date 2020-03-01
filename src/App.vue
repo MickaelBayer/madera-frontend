@@ -2,6 +2,7 @@
   v-app
     Header(ref="foo")
     router-view
+    v-btn(small='', v-if='installBtn', @click='installer') Installer l'application Madera
 </template>
 
 <script>
@@ -11,9 +12,30 @@ export default {
   components: {Header},
   data() {
     return {
+      installBtn: false,
+      installPrompt: null
     }
   },
-  mounted() {
+  created() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault()
+      this.installPrompt = e
+      this.installBtn = true
+    })
+  },
+  methods: {
+    installer() {
+      this.installBtn = false
+      this.installPrompt.prompt()
+      this.installPrompt.userChoice.then((result) => {
+        if (result.outcome === 'accepted') {
+          console.log('User accepted')
+        } else {
+          console.log('User denied')
+        }
+        this.installPrompt = null
+      })
+    }
   }
 }
 </script>
