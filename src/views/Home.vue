@@ -39,6 +39,9 @@
     },
     mounted() {
       this.$store.commit('hideTabsBE')
+      this.$store.commit('deleteProjectModules')
+      this.$store.commit('deleteProject')
+      this.$store.commit('deleteCustomer')
       this.role = Number(this.$store.state.user.userRole)
     },
     methods: {
