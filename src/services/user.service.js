@@ -14,7 +14,6 @@ function logout() {
 function login(mail, password) {
   return instance.post('/login', {mail: mail, password: password})
   .then(response => {
-    console.log(response)
     if (response.status === 200) {
       store.commit('displayMyAccount')
       store.commit('setUser', response.data)

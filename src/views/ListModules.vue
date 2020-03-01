@@ -124,26 +124,13 @@
     },
     async mounted() {
       this.$store.commit('displayTabsBE')
-      const modulesResponse = await moduleService.getModules();
-      this.modules = modulesResponse.data
-      this.modules.forEach(module => {
-        module.selectedComponents = []
-      });
-      const familiesResponse = await moduleService.getModulesFamilies();
-      this.families = familiesResponse.data
-      const rangesResponse = await moduleService.getRanges();
-      this.ranges = rangesResponse.data
-      const compoFamResponse = await moduleService.getComponentsFamilies();
-      this.componentsFamilies = compoFamResponse.data
-      const cctpsResponse = await moduleService.getCctps();
-      this.cctps = cctpsResponse.data
     },
     beforeDestroy(){
       this.$store.commit('hideTabsBE')
     },
     methods: {
       async initialize () {
-        this.$store.commit('displayTabsBE')
+        // this.$store.commit('displayTabsBE')
         const modulesResponse = await moduleService.getModules();
         this.modules = modulesResponse.data;
         this.modules.forEach(module => {
@@ -157,6 +144,8 @@
         this.componentsFamilies = compoFamResponse.data
         const cctpsResponse = await moduleService.getCctps();
         this.cctps = cctpsResponse.data
+        let date = new Date(this.modules[0].createdAt)
+        console.log(date)
       },
 
       async rangeSelected() {
@@ -243,7 +232,6 @@
            && this.editedItem.family
            && this.editedItem.specs
            && this.editedItem.cctp
-           && this.editedItem.selectedComponents.length !== 0
            ){
           // Replace the id of the family by the object family
           if (!isNaN(this.editedItem.family)) {
@@ -262,12 +250,14 @@
           }
           // Replace the ids of the componenent in selectedComponents
           const selectedComponentsModif = []
-          this.editedItem.selectedComponents.forEach(component => {
-            if (component !== null) {
-              selectedComponentsModif.push(this.components[this.components.findIndex(x => x.id === component)])
-            }
-          });
-          this.editedItem.selectedComponents = selectedComponentsModif
+          if(this.editedItem.selectedComponents && this.editedItem.selectedComponents.length !== 0) {
+            this.editedItem.selectedComponents.forEach(component => {
+              if (component !== null) {
+                selectedComponentsModif.push(this.components[this.components.findIndex(x => x.id === component)])
+              }
+            })
+            this.editedItem.selectedComponents = selectedComponentsModif
+          }
           // Edit
           if (this.editedIndex > -1) {
             this.resultSaveModule = await moduleService.updateModule(this.editedItem)

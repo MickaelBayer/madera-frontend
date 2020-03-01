@@ -17,7 +17,8 @@
           <v-divider class="mx-4" inset="" vertical=""></v-divider>
           <v-dialog v-model="dialog" max-width="1000px">
             <template v-slot:activator="{ on }">
-              <v-btn class="mb-2" color="primary" dark="" v-on="on">Ajouter</v-btn>
+              <v-icon class="mr-2" color="#409a1b" x-large="" v-on="on">person_add</v-icon>
+              <!-- <v-btn class="mb-2" color="primary" dark="" v-on="on">Ajouter</v-btn> -->
             </template>
             <v-card>
               <v-card-title><span class="headline">{{ formTitle }}</span></v-card-title>

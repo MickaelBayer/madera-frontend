@@ -1,13 +1,23 @@
 import { instance } from '../Api'
 import store from '../store/store'
 
-function saveProject(name, range, customer, user) {
-  console.log({ name: name, range: range, customer: customer, user: user})
-  return instance.post('/project', { name: name,
-                                    range: range,
-                                    customer: customer,
-                                    user: user.id})
+function saveProject() {
+  return instance.post('/project', { name: store.state.project.name,
+                                     ranges: store.state.project.ranges,
+                                     customer: store.state.customer,
+                                     commercial: {
+                                      id: Number(store.state.user.userID),
+                                    }
+                                  })
     .then(response => {
+      store.commit('setProject', response.data)
+      store.state.projectModules.forEach(async (element) => {
+        element.project = response.data
+        await instance.post('/projectModule', element)
+        .catch(error => {
+          console.log(error)
+        })
+      });
       if (response.status === 201) {
         return {
           status: 'success',
@@ -34,8 +44,29 @@ function saveProject(name, range, customer, user) {
     })
 }
 
+function getProjectModule(){
+  instance.get('/projectModule/project/' + store.state.project.id)
+  .then(response => {
+    store.commit('setProjectModule', response.data)
+  })
+}
+
+function getProject(id){
+  instance.get('/project/' + id)
+  .then(response => {
+    store.commit('setProject', response.data)
+  })
+}
+
+function getProjects(){
+  return instance.get('/project')
+}
+
 const projectService = {
   saveProject,
+  getProjectModule,
+  getProject,
+  getProjects,
 }
 
 export default projectService
