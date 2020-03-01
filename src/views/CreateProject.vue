@@ -1,7 +1,7 @@
 <template lang="pug">
   .createProject
     v-layout(child-flex='')
-      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by='position' :items='$store.state.projectModules', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
+      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by='position' :items='projectModules', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
         template(v-slot:top='')
           v-toolbar(flat='', color='white')
             v-toolbar-title Nouveau projet
@@ -111,14 +111,22 @@
       },
     },
     async mounted() {
+      if(this.$store.state.project === {}){
+        this.$store.commit('resetPositionModule')
+      } else {
+        if(this.$store.state.project.name){
+          this.name = this.$store.state.project.name
+        }
+        if(this.$store.state.project.range){
+          this.range = this.$store.state.project.ranges.id
+        }
+      }
       const rangesResponse = await moduleService.getRanges()
       this.ranges = rangesResponse.data;
       const familiesResponse = await moduleService.getModulesFamilies()
       this.families = familiesResponse.data
       const modulesResponse = await moduleService.getModules()
       this.modules = modulesResponse.data;
-      this.name = this.$store.state.project.name
-      this.range = this.$store.state.project.ranges.id
       if (this.$store.state.project.id){
         this.projectModules = await projectService.getProjectModule()
         this.$store.commit('setProjectModules', this.projectModules)
@@ -134,9 +142,8 @@
         this.modules = modulesResponse.data;
         this.name = this.$store.state.project.name
         this.range = this.$store.state.project.ranges.id
-        if (this.$store.state.project.id){
-          this.projectModules = await projectService.getProjectModule()
-          this.$store.commit('setProjectModules', this.projectModules)
+        if (this.$store.state.projectModules){
+          this.projectModules = this.$store.state.projectModules
         }
       },
 
@@ -172,7 +179,6 @@
           else {
             //this.resultSaveComponent = await moduleService.saveComponent(this.editedItem)
             this.$store.commit('addModuleToProject', projectModule)
-            console.log(this.$store.state.projectModules)
           }
           this.initialize()
           this.close()

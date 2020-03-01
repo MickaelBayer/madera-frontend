@@ -47,7 +47,7 @@ function saveProject() {
 function getProjectModule(){
   instance.get('/projectModule/project/' + store.state.project.id)
   .then(response => {
-    store.commit('setProjectModule', response.data)
+    store.commit('setProjectModules', response.data)
   })
 }
 

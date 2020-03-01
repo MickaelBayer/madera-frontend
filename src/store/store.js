@@ -11,7 +11,7 @@ const state = {
   displayTabsBE: false,
   user: null,
   customer: null,
-  project: null,
+  project: {},
   projectModules: [],
   positionModule: 1,
 };
@@ -46,7 +46,7 @@ const mutations = {
     state.project = project
   },
   deleteProject (state){
-    state.project = null
+    state.project = {}
   },
   setProjectRange (state, range){
     state.project.ranges = range
@@ -64,7 +64,7 @@ const mutations = {
     state.projectModules = projectModules
   },
   deleteProjectModules(state){
-    state.projectModules = null
+    state.projectModules = []
   },
   addModuleToProject(state, module){
     state.projectModules.push(module)
