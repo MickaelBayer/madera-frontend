@@ -181,7 +181,7 @@ function deleteProvider(provider) {
         return {
           status: 'success',
           icon: 'check_circle',
-          msg: 'Composant correctement supprimé.'
+          msg: 'Fournisseur correctement supprimé.'
         }
       }
     })
@@ -288,7 +288,7 @@ function deleteModule(module) {
         return {
           status: 'success',
           icon: 'check_circle',
-          msg: 'Composant correctement supprimé.'
+          msg: 'Module correctement supprimé.'
         }
       }
     })

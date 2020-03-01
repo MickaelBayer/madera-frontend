@@ -23,8 +23,8 @@
                           v-text-field(v-model='editedItem.phone', label='N° Téléphone')
                   v-card-actions
                     v-spacer
-                    v-btn(color='blue darken-1', text='', @click='close') Cancel
-                    v-btn(color='blue darken-1', text='', @click='save') Save
+                    v-btn(color='blue darken-1', text='', @click='close') Annuler
+                    v-btn(color='blue darken-1', text='', @click='save') Enregistrer
           template(v-slot:item.action='{ item }')
             v-icon.mr-2(@click='editItem(item)', x-large="")
               | edit
