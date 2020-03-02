@@ -21,7 +21,7 @@ import { TextureLoader } from '../../build/three.module.js';
 
 			function init() {
 
-
+				
 				container = document.getElementById('container');
                 renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -55,55 +55,7 @@ import { TextureLoader } from '../../build/three.module.js';
 
 				window.addEventListener( 'keydown', function (event) {
 
-					switch (event.keyCode) {
-
-						case 81: // Q
-							control.setSpace( control.space === "local" ? "world" : "local" );
-							break;
-
-						case 16: // Shift
-							control.setTranslationSnap( 100 );
-							control.setRotationSnap( THREE.MathUtils.degToRad(15) );
-							control.setScaleSnap( 0.25 );
-							break;
-
-
-						case 87: // W
-							control.setMode("translate");
-							break;
-
-						case 69: // E
-							control.setMode("rotate");
-							break;
-
-						case 82: // R
-							control.setMode("scale");
-							break;
-
-							case 46:
-							var i;
-							arrayOfElements.forEach(elements =>  i = elements.name);
-							alert(selectedObject.name);
-							var selectedObject = scene.getObjectByName(i);
-							scene.dispose(selectedObject);
-							deleteObject(selectedObject);
-						
-							
-							break;
-					}
-				} );
-
-				window.addEventListener( 'keyup', function ( event ) {
-
-					switch ( event.keyCode ) {
-
-						case 17: // Ctrl
-							control.setTranslationSnap( null );
-							control.setRotationSnap( null );
-							control.setScaleSnap( null );
-							break;
-
-					}
+				
 
 				} );
 				document.getElementById('Wall').addEventListener("click", addWall);
@@ -114,7 +66,24 @@ import { TextureLoader } from '../../build/three.module.js';
 
 				document.getElementById('scale').addEventListener("click", setHeigth);
 
+				document.getElementById('Door').addEventListener("click", addDoor);
+
+				document.getElementById('Window').addEventListener("click", addWindow);
+
+				document.getElementById('freeMouve').addEventListener("click", freeMouve);
+
+				var light = new THREE.AmbientLight( 0xFFFFFF ); // soft white light
+				scene.add( light );
+
+			
 			}
+			function freeMouve(){
+				control.setTranslationSnap( null );
+				control.setRotationSnap( THREE.MathUtils.degToRad( null ));
+				control.setScaleSnap( null );
+				
+			}
+
 			function mouveForm(){
 
 				control.setMode( "translate" );
@@ -147,20 +116,7 @@ import { TextureLoader } from '../../build/three.module.js';
 			
 			function addWall() {
 			
-				var spotLight = new THREE.SpotLight( 0xffffff );
-				spotLight.position.set( 1000, 1000, 1000 );
 				
-				spotLight.castShadow = true;
-				
-				spotLight.shadow.mapSize.width = 1024;
-				spotLight.shadow.mapSize.height = 1024;
-				
-				spotLight.shadow.camera.near = 500;
-				spotLight.shadow.camera.far = 4000;
-				spotLight.shadow.camera.fov = 30;
-				
-				scene.add( spotLight );
-
 				var wallSize = document.getElementById("wallSize");
 				var wallTexture = document.getElementById("wallTexture");
 				var WallSizeSelect = wallSize.options[wallSize.selectedIndex].value;
@@ -168,7 +124,7 @@ import { TextureLoader } from '../../build/three.module.js';
 
 				alert(WallSizeSelect);
 				alert(WallTextureSelect);
-				var geometry = new THREE.BoxBufferGeometry( WallSizeSelect, 300, 100 );
+				var geometry = new THREE.BoxBufferGeometry( WallSizeSelect, 100, 100 );
 				var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(WallTextureSelect) });
 				var cube = new THREE.Mesh(geometry, material);
 
@@ -202,12 +158,156 @@ import { TextureLoader } from '../../build/three.module.js';
 			}
 
 			function render() {
-
+				
 				renderer.render( scene, camera );
 
 			}
+
+			function addDoor(){
+
+				var doorTexture = document.getElementById("doorTexture");
+				var doorTextureSelected =  parseInt(doorTexture.options[doorTexture.selectedIndex].value);
+				alert("door?");
+				alert(doorTextureSelected);
+				switch(doorTextureSelected){
+					case 1: 
+					alert("Porte Entrée");
+					var geometry = new THREE.BoxBufferGeometry( 200, 300, 25 );
+					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://www.jaimemonartisan.com/uploads/images/belm/3-belm-porte-dentree-bois-denia-default.jpg?v1.3.6") });
+					var cube = new THREE.Mesh(geometry, material);
+	
+					cube.position.set(0, 100, 0);
+				
+					cube.name = 'doorEntrance ' + i++;
+					cube.is_ob = true;
+					scene.add(cube);
+					objects.push(cube); 
+				
+					control.attach(cube);
+					scene.add(control);
+	
+					control.setTranslationSnap( 100 );
+					control.setRotationSnap( THREE.MathUtils.degToRad( 15 ));
+					control.setScaleSnap( 0.25 );
+	
+					render();
+
+					break;
+					case 2: 
+					alert("Porte Garage");
+				
+					var geometry = new THREE.BoxBufferGeometry( 400, 300, 100 );
+					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://www.halloin.com/images-portes/LI-NL/7023.png") });
+					var cube = new THREE.Mesh(geometry, material);
+	
+					cube.position.set(0, 100, 0);
+				
+					cube.name = 'garage ' + i++;
+					cube.is_ob = true;
+					scene.add(cube);
+					objects.push(cube); 
+				
+					control.attach(cube);
+					scene.add(control);
+	
+					control.setTranslationSnap( 100 );
+					control.setRotationSnap( THREE.MathUtils.degToRad( 15 ));
+					control.setScaleSnap( 0.25 );
+	
+					render();
+
+
+					break;
+					case 3: 
+					alert("Porte coulissante");
+				
+					var geometry = new THREE.BoxBufferGeometry( 200, 300, 100 );
+					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://lh3.googleusercontent.com/proxy/bhJCf46uJuPnorc0DVDS37PPskkPQyhQdS2fqE0PJlStI0gIlHA98bE1FMILerhsIpd-MrjjOroLzzytAkDoV2H47mQjSzRkN7zMznqoiQWRrCowQpC3RVJR9OKrkMWxZEuF48vPYg5iMJm4OYoX6Q") });
+					var cube = new THREE.Mesh(geometry, material);
+	
+					cube.position.set(0, 100, 0);
+				
+					cube.name = 'coulissante ' + i++;
+					cube.is_ob = true;
+					scene.add(cube);
+					objects.push(cube); 
+				
+					control.attach(cube);
+					scene.add(control);
+	
+					control.setTranslationSnap( 100 );
+					control.setRotationSnap( THREE.MathUtils.degToRad( 15 ));
+					control.setScaleSnap( 0.25 );
+	
+					render();
+					break;
+					case 4: 
+					alert("Porte intérieur simple");
+					
+					setSpotLight();
+					var geometry = new THREE.BoxBufferGeometry( 200, 300, 100 );
+					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://lh3.googleusercontent.com/proxy/-WCn0AJTYZnVi8JXB2dXMm3-u0TV2OkyEBT3SL46OyzNsw7phPYVLbr-GTzJNDpN4axY6j5AFcU2WTlBF5paBKB_cOm5psgXcm9f5ee19dwXiVXxUl3rEerHsfbyikmorCliYz1yCXCl0mFmlmv0phGB") });
+					var cube = new THREE.Mesh(geometry, material);
+	
+					cube.position.set(0, 100, 0);
+				
+					cube.name = 'simpleDoor ' + i++;
+					cube.is_ob = true;
+					scene.add(cube);
+					objects.push(cube); 
+				
+					control.attach(cube);
+					scene.add(control);
+
+					control.setTranslationSnap( 100 );
+					control.setRotationSnap( THREE.MathUtils.degToRad( 15 ));
+					control.setScaleSnap( 0.25 );
+	
+					break;
+
+				}
+			}
+
+
+			function addWindow(){
+				alert("Window");
+				var geometry = new THREE.BoxBufferGeometry( 200, 200, 25 );
+				var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://lh3.googleusercontent.com/proxy/iv0J9yGH-2JxgjLs94WEAWLAz2EpfWgVJDNiXr4r3JhMcx8RqexScvu-yuCYly_eHckRh-CUIy917ojV70d3rWNwzTOdmbpSj7CshRJtfSpsnN4zb99nEdMYakqqWrrNb5PqGcHs1BAdc7AaTvOtBCQPomnpANwW-g") });
+				var cube = new THREE.Mesh(geometry, material);
+
+				cube.position.set(0, 100, 0);
 			
+				cube.name = 'window ' + i++;
+				cube.is_ob = true;
+				scene.add(cube);
+				objects.push(cube); 
 			
+				control.attach(cube);
+				scene.add(control);
+
+				control.setTranslationSnap( 100 );
+				control.setRotationSnap( THREE.MathUtils.degToRad( 15 ));
+				control.setScaleSnap( 0.25 );
+
+				render();
+			}
+			
+			function setSpotLight(){
+				var spotLight = new THREE.SpotLight( 0xffffff );
+				spotLight.position.set( 1000, 1000, 1000 );
+				
+				spotLight.castShadow = true;
+				
+				spotLight.shadow.mapSize.width = 1024;
+				spotLight.shadow.mapSize.height = 1024;
+				
+				spotLight.shadow.camera.near = 500;
+				spotLight.shadow.camera.far = 4000;
+				spotLight.shadow.camera.fov = 30;
+				
+				scene.add( spotLight );
+
+			}
 	
 			
 			

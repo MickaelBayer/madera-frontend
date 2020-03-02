@@ -14,20 +14,41 @@
     option(value=100)  1X1
     option(value=200)  1X2
     option(value=300)  1X3 
+    option(value=400)  1X4
+    option(value=500)  1X5 
+    option(value=600)  1X6 
+    option(value=700)  1X7
+    option(value=800)  1X8 
    h4 texture:
    select(id="wallTexture")
     option(value="https://www.parquet-terrasse-bois.fr/wp-content/uploads/2018/08/Lambris_bois_epicea_rabote.jpg")  Bois d'épicéa
-    option(value="https://www.majofesa.com/wp-content/uploads/2016/06/FR-sapin-700x330.jpg")  bois de sapin
-    option(value="https://www.e-wood.fr/media/catalog/product/cache/c687aa7517cf01e65c009f6943c2b1e9/p/a/packshot_bardage_bois_ivar_douglas_saturateur_authentic_5.jpg")  Bois de douglas 
-    option(value="https://www.majofesa.com/wp-content/uploads/2016/06/FR-meleze-700x330.jpg")  Bois de mélèze 
+    option(value="https://www.parquet-terrasse-bois.fr/wp-content/uploads/2019/09/douglas_naturel_elegie_brun_buisson_.jpg")  bois de sapin
+    option(value="https://www.parquet-terrasse-bois.fr/wp-content/uploads/2019/01/THERMO-210-600x600.jpg")  Bois de douglas 
+    option(value="https://www.parquet-terrasse-bois.fr/wp-content/uploads/2018/09/Brun-buisson-LC75_0017_6004_Classic_LC75_Frontal-300x300.jpg")  Bois de mélèze 
    #Action
    v-btn(small="", color="success" @click="createWall" id="Wall") Créer un mur
+     .label
+   h3 Action création porte:
+   #create
+   h4 type:
+    br 
+    select(id="doorTexture")
+       option(value="1") Porte d'entrée
+       option(value="2") Porte de garage
+       option(value="3") porte coulissante
+       option(value="4") porte interieur simple
+   #Action
+   v-btn(small="", color="success" @click="createDoor" id="Door") Créer une porte
+   br 
+   v-btn(small="", color="success" @click="createDoor" id="Window") Créer une fénêtre
+
    .label
    h3 Controles:
    #Controle
     v-btn(small="", color="primary"  id="mouve") Bouger l'élément
     v-btn(small="", color="primary"  id="rotate") Faire une rotation de l'élément
     v-btn(small="", color="primary"  id="scale") Changer la taille de l'élément courant
+    v-btn(small="", color="primary"  id="freeMouve") Bouger librement l'élément courant
    #container
 </template>
 
@@ -45,5 +66,21 @@ export default {
 </script>
 
 <style scoped>
+select{
+  border:solid;
+  border-color: darkgray;
+  background-color: white;
+  border-radius: 50px;
 
+}
+button{
+  margin:10px;
+  }
+
+  body{
+     background-image: url("../img/Madera.png");
+  }
+.modelisation{
+  background-color: darkgray;
+}
 </style>
