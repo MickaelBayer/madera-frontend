@@ -12,7 +12,8 @@
             v-divider.mx-4(inset='', vertical='')
             v-dialog(v-model='dialog', max-width='1000px')
               template(v-slot:activator='{ on }')
-                v-btn.mb-2(color='primary', dark='', v-on='on') Ajouter
+                v-icon.mr-2(x-large='' color="#409a1b" v-on='on')
+                  | add_circle_outline
               v-card
                 v-card-title
                   span.headline {{ formTitle }}
@@ -142,7 +143,7 @@
           // edit
           if (this.editedIndex > -1) {
             this.resultSaveProvider = await moduleService.updateProvider(this.editedItem)
-          } 
+          }
           // new
           else {
             this.resultSaveProvider = await moduleService.saveProvider(this.editedItem)
