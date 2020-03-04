@@ -49,6 +49,7 @@
     v-btn(small="", color="primary"  id="rotate") Faire une rotation de l'élément
     v-btn(small="", color="primary"  id="scale") Changer la taille de l'élément courant
     v-btn(small="", color="primary"  id="freeMouve") Bouger librement l'élément courant
+    v-btn(small="", color="primary"  id="supress") Supprimer dernier élément
    #container
 </template>
 

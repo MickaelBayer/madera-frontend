@@ -3,7 +3,7 @@
 			import { OrbitControls } from '../jsm/controls/OrbitControls.js';
 
 			import { TransformControls } from '../jsm/controls/TransformControls.js';
-import { TextureLoader } from '../../build/three.module.js';
+			import { TextureLoader } from '../../build/three.module.js';
 
 			var container, stats;
 			var camera, scene, renderer, control, orbit;
@@ -26,6 +26,7 @@ import { TextureLoader } from '../../build/three.module.js';
                 renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor(0xffffff);
 				container.appendChild( renderer.domElement );
 
 				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3000 );
@@ -34,7 +35,6 @@ import { TextureLoader } from '../../build/three.module.js';
 
 				scene = new THREE.Scene();
 				scene.add( new THREE.GridHelper( 1000, 10 ) );
-
 
 				orbit = new OrbitControls(camera, renderer.domElement);
 				orbit.update();
@@ -72,12 +72,16 @@ import { TextureLoader } from '../../build/three.module.js';
 
 				document.getElementById('freeMouve').addEventListener("click", freeMouve);
 
+				document.getElementById('supress').addEventListener("click", deleteObject);
+
 				var light = new THREE.AmbientLight( 0xFFFFFF ); // soft white light
 				scene.add( light );
 
 			
 			}
 			function freeMouve(){
+				
+				control.setMode( "translate" );
 				control.setTranslationSnap( null );
 				control.setRotationSnap( THREE.MathUtils.degToRad( null ));
 				control.setScaleSnap( null );
@@ -87,6 +91,10 @@ import { TextureLoader } from '../../build/three.module.js';
 			function mouveForm(){
 
 				control.setMode( "translate" );
+				control.setTranslationSnap( 100 );
+				control.setRotationSnap( THREE.MathUtils.degToRad( 15 ));
+				control.setScaleSnap( 0.25 );
+
 
 			}
 
@@ -102,14 +110,18 @@ import { TextureLoader } from '../../build/three.module.js';
 
 			}
 
-			function deleteObject(objname){
-				var obj, i;
-				for(i = scene.children.length - 1; i >= 0 ; i--){
-					obj = scene.children [i];
+			function deleteObject(){
+				   var obj, i;
+				   i =scene.children.length-1;
+					obj = scene.children [i-1];
 					if(obj.is_ob){
+						control.detach();
+						obj.material=undefined;
+						obj.geometry=undefined;
+
 						scene.remove(obj);
 					}
-				}
+				
 				render();
 			}
 		
@@ -122,8 +134,6 @@ import { TextureLoader } from '../../build/three.module.js';
 				var WallSizeSelect = wallSize.options[wallSize.selectedIndex].value;
 				var WallTextureSelect = wallTexture.options[wallTexture.selectedIndex].value;
 
-				alert(WallSizeSelect);
-				alert(WallTextureSelect);
 				var geometry = new THREE.BoxBufferGeometry( WallSizeSelect, 100, 100 );
 				var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(WallTextureSelect) });
 				var cube = new THREE.Mesh(geometry, material);
@@ -167,11 +177,9 @@ import { TextureLoader } from '../../build/three.module.js';
 
 				var doorTexture = document.getElementById("doorTexture");
 				var doorTextureSelected =  parseInt(doorTexture.options[doorTexture.selectedIndex].value);
-				alert("door?");
-				alert(doorTextureSelected);
+			
 				switch(doorTextureSelected){
 					case 1: 
-					alert("Porte Entrée");
 					var geometry = new THREE.BoxBufferGeometry( 200, 300, 25 );
 					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://www.jaimemonartisan.com/uploads/images/belm/3-belm-porte-dentree-bois-denia-default.jpg?v1.3.6") });
 					var cube = new THREE.Mesh(geometry, material);
@@ -194,7 +202,6 @@ import { TextureLoader } from '../../build/three.module.js';
 
 					break;
 					case 2: 
-					alert("Porte Garage");
 				
 					var geometry = new THREE.BoxBufferGeometry( 400, 300, 100 );
 					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://www.halloin.com/images-portes/LI-NL/7023.png") });
@@ -219,7 +226,6 @@ import { TextureLoader } from '../../build/three.module.js';
 
 					break;
 					case 3: 
-					alert("Porte coulissante");
 				
 					var geometry = new THREE.BoxBufferGeometry( 200, 300, 100 );
 					var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://lh3.googleusercontent.com/proxy/bhJCf46uJuPnorc0DVDS37PPskkPQyhQdS2fqE0PJlStI0gIlHA98bE1FMILerhsIpd-MrjjOroLzzytAkDoV2H47mQjSzRkN7zMznqoiQWRrCowQpC3RVJR9OKrkMWxZEuF48vPYg5iMJm4OYoX6Q") });
@@ -242,7 +248,6 @@ import { TextureLoader } from '../../build/three.module.js';
 					render();
 					break;
 					case 4: 
-					alert("Porte intérieur simple");
 					
 					setSpotLight();
 					var geometry = new THREE.BoxBufferGeometry( 200, 300, 100 );
@@ -270,7 +275,6 @@ import { TextureLoader } from '../../build/three.module.js';
 
 
 			function addWindow(){
-				alert("Window");
 				var geometry = new THREE.BoxBufferGeometry( 200, 200, 25 );
 				var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("https://lh3.googleusercontent.com/proxy/iv0J9yGH-2JxgjLs94WEAWLAz2EpfWgVJDNiXr4r3JhMcx8RqexScvu-yuCYly_eHckRh-CUIy917ojV70d3rWNwzTOdmbpSj7CshRJtfSpsnN4zb99nEdMYakqqWrrNb5PqGcHs1BAdc7AaTvOtBCQPomnpANwW-g") });
 				var cube = new THREE.Mesh(geometry, material);
