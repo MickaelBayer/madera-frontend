@@ -9,8 +9,8 @@
             v-spacer
             v-text-field(v-model='search', append-icon='search', label='Rechercher', single-line='', hide-details='')
             v-spacer
-            v-divider.mx-4(inset='', vertical='')
-            v-icon.mr-2(x-large='', @click="$router.push('/listCustomers')" , color="#409a1b")
+            v-divider.mx-4(inset='', vertical='' v-if="role !== 3")
+            v-icon.mr-2(x-large='', @click="$router.push('/listCustomers')" , color="#409a1b", v-if="role !== 3")
              | add_circle_outline
             //- v-dialog(v-model='dialog', max-width='1000px')
             //-   template(v-slot:activator='{ on }')
@@ -59,6 +59,7 @@
     data() {
       return {
         search: '',
+        role: Number(this.$store.state.user.userRole),
         dialog: false,
         resultSaveProjects: null,
         selectedRow: null,
@@ -161,7 +162,7 @@
           // edit
           if (this.editedIndex > -1) {
             this.resultSaveProject = await moduleService.updateProject(this.editedItem)
-          } 
+          }
           // new
           else {
             this.resultSaveProject = await moduleService.saveProject(this.editedItem)

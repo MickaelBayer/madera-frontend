@@ -12,7 +12,8 @@
             v-divider.mx-4(inset='', vertical='')
             v-dialog(v-model='dialog', max-width='1000px')
               template(v-slot:activator='{ on }')
-                v-btn.mb-2(color='primary', dark='', v-on='on') Ajouter
+                v-icon.mr-2(x-large='' color="#409a1b" v-on='on')
+                  | add_circle_outline
               v-card
                 v-card-title
                   span.headline {{ formTitle }}
@@ -173,7 +174,7 @@
       },
 
       isRangesAndFamilySelected(){
-        return this.editedItem.ranges !== null && this.editedItem.family !== null 
+        return this.editedItem.ranges !== null && this.editedItem.family !== null
       },
 
       async activate(item) {
@@ -261,7 +262,7 @@
           // Edit
           if (this.editedIndex > -1) {
             this.resultSaveModule = await moduleService.updateModule(this.editedItem)
-          } 
+          }
           // New
           else {
             this.resultSaveModule = await moduleService.saveModule(this.editedItem)
