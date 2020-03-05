@@ -29,7 +29,7 @@
                       v-col(cols='12', sm='6', md='6')
                         v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature', required='')
                       v-col(cols='12', sm='6', md='6')
-                        v-text-field(v-model='editedItem.quantity', label='Taille / Quantité', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].units : ""', required='', :disabled='editedItem.family === null')
+                        v-text-field(v-model='editedItem.quantity', type='number' label='Taille / Quantité', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].units : ""', required='', :disabled='editedItem.family === null')
                       v-col(cols='12', sm='6', md='6', v-if='(editedItem.family !== null) && ((modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))).length !== 0)')
                         v-select(v-model='editedItem.module', :items='modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))', item-text='name', item-value='id', label='Module', required='', :disabled='editedIndex !== -1')
                 v-card-actions

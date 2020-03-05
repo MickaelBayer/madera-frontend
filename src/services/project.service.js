@@ -44,11 +44,15 @@ function saveProject() {
     })
 }
 
-function getProjectModule(){
+function setProjectModules(){
   instance.get('/projectModule/project/' + store.state.project.id)
   .then(response => {
     store.commit('setProjectModules', response.data)
   })
+}
+
+function getProjectModules(id){
+  return instance.get('/projectModule/project/' + id)
 }
 
 function getProject(id){
@@ -62,11 +66,42 @@ function getProjects(){
   return instance.get('/project')
 }
 
+function deleteProject(project) {
+  return instance.delete('/project/' + project.id)
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Project correctement supprimé.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
 const projectService = {
   saveProject,
-  getProjectModule,
+  getProjectModules,
   getProject,
   getProjects,
+  setProjectModules,
+  deleteProject,
 }
 
 export default projectService
