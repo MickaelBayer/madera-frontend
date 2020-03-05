@@ -43,8 +43,7 @@
             v-icon(@click='deleteItem(item)', x-large='')
               | delete
         v-btn.cancelCreate(outlined='', right='', color='#d92616', @click='backHome()')  Annuler
-        v-btn(outlined='', right='', color='#409a1b', @click='validateCustomer()')  Valider
-
+        v-btn(outlined='', right='', color='#409a1b', @click='createProject()')  Valider
     v-alert(:type='resultAddProject.status' width="100%" class="successAddProject" :icon="resultAddProject.icon" v-if="resultAddProject")
       | {{resultAddProject.msg}}
 </template>
