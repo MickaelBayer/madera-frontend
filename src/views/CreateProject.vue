@@ -1,49 +1,49 @@
 <template lang="pug">
   .createProject
     v-layout(child-flex='')
-      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by='position' :items='projectModules', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
-        template(v-slot:top='')
-          v-toolbar(flat='', color='white')
-            v-toolbar-title Nouveau projet
-            v-divider.mx-4(inset='', vertical='')
-            v-spacer
-            v-text-field(v-model='name', label='Intitulé du projet', single-line='', required='', hide-details='', v-on:change='updateProjectName')
-            v-spacer
-            v-divider.mx-4(inset='', vertical='')
-            v-spacer
-            v-select(:items='ranges', v-model='range', label='Gamme', item-text="name", item-value="id", single-line='', required='', hide-details='', v-on:change='updateRange')
-            v-spacer
-            v-divider.mx-4(inset='', vertical='')
-            v-dialog(v-model='dialog', max-width='1000px')
-              template(v-slot:activator='{ on }')
-                v-icon.mr-2(x-large='', v-on='on', :disabled='name === null || name === "" || range === null', color="#409a1b")
-                  | add_circle_outline
-              v-card
-                v-card-title
-                  span.headline {{ formTitle }}
-                v-card-text
-                  v-container
-                    v-row
-                      v-col(cols='12', sm='6', md='6')
-                        v-text-field(v-model='editedItem.name', label='Nom du module', required='')
-                      v-col(cols='12', sm='6', md='6')
-                        v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature', required='')
-                      v-col(cols='12', sm='6', md='6')
-                        v-text-field(v-model='editedItem.quantity', type='number' label='Taille / Quantité', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].units : ""', required='', :disabled='editedItem.family === null')
-                      v-col(cols='12', sm='6', md='6', v-if='(editedItem.family !== null) && ((modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))).length !== 0)')
-                        v-select(v-model='editedItem.module', :items='modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))', item-text='name', item-value='id', label='Module', required='', :disabled='editedIndex !== -1')
-                v-card-actions
-                  v-spacer
-                  v-btn(color='blue darken-1', text='', @click='close') Annuler
-                  v-btn(color='blue darken-1', text='', @click='save') Ajouter
-        template(v-slot:item.action='{ item }')
-          v-icon.mr-2(@click='editItem(item)', x-large='')
-            | edit
-          v-icon(@click='deleteItem(item)', x-large='')
-            | delete
-        template(v-slot:body.append='')
-          v-btn(outlined='', class="cancelCreate" right=true, color="#d92616", @click='backHome()') Annuler
-          v-btn(outlined='', right=true, color="#409a1b", @click='createProject()') Créer
+      v-card
+        v-data-table(item-key="id", :headers='headers', sort-by='position' :items='projectModules', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
+          template(v-slot:top='')
+            v-toolbar(flat='', color='white')
+              v-toolbar-title Nouveau projet
+              v-divider.mx-4(inset='', vertical='')
+              v-spacer
+              v-text-field(v-model='name', label='Intitulé du projet', single-line='', required='', hide-details='', v-on:change='updateProjectName')
+              v-spacer
+              v-divider.mx-4(inset='', vertical='')
+              v-spacer
+              v-select(:items='ranges', v-model='range', label='Gamme', item-text="name", item-value="id", single-line='', required='', hide-details='', v-on:change='updateRange')
+              v-spacer
+              v-divider.mx-4(inset='', vertical='')
+              v-dialog(v-model='dialog', max-width='1000px')
+                template(v-slot:activator='{ on }')
+                  v-icon.mr-2(x-large='', v-on='on', :disabled='name === null || name === "" || range === null', color="#409a1b")
+                    | add_circle_outline
+                v-card
+                  v-card-title
+                    span.headline {{ formTitle }}
+                  v-card-text
+                    v-container
+                      v-row
+                        v-col(cols='12', sm='6', md='6')
+                          v-text-field(v-model='editedItem.name', label='Nom du module', required='')
+                        v-col(cols='12', sm='6', md='6')
+                          v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Nature', required='')
+                        v-col(cols='12', sm='6', md='6')
+                          v-text-field(v-model='editedItem.quantity', type='number' label='Taille / Quantité', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].units : ""', required='', :disabled='editedItem.family === null')
+                        v-col(cols='12', sm='6', md='6', v-if='(editedItem.family !== null) && ((modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))).length !== 0)')
+                          v-select(v-model='editedItem.module', :items='modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))', item-text='name', item-value='id', label='Module', required='', :disabled='editedIndex !== -1')
+                  v-card-actions
+                    v-spacer
+                    v-btn(color='blue darken-1', text='', @click='close') Annuler
+                    v-btn(color='blue darken-1', text='', @click='save') Ajouter
+          template(v-slot:item.action='{ item }')
+            v-icon.mr-2(@click='editItem(item)', x-large='')
+              | edit
+            v-icon(@click='deleteItem(item)', x-large='')
+              | delete
+        v-btn.cancelCreate(outlined='', right='', color='#d92616', @click='backHome()')  Annuler
+        v-btn(outlined='', right='', color='#409a1b', @click='createProject()')  Valider
     v-alert(:type='resultAddProject.status' width="100%" class="successAddProject" :icon="resultAddProject.icon" v-if="resultAddProject")
       | {{resultAddProject.msg}}
 </template>
@@ -174,7 +174,7 @@
           // Edit
           if (this.editedIndex > -1) {
             //this.resultSaveComponent = await moduleService.updateComponent(this.editedItem)
-          } 
+          }
           // New
           else {
             //this.resultSaveComponent = await moduleService.saveComponent(this.editedItem)
