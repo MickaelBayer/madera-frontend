@@ -12,30 +12,8 @@
             v-divider.mx-4(inset='', vertical='' v-if="role !== 3")
             v-icon.mr-2(x-large='', @click="$router.push('/listCustomers')" , color="#409a1b", v-if="role !== 3")
              | add_circle_outline
-            //- v-dialog(v-model='dialog', max-width='1000px')
-            //-   template(v-slot:activator='{ on }')
-            //-     v-icon.mr-2(x-large='', v-on='on', color="#409a1b")
-            //-       | add_circle_outline
-            //-   v-card
-            //-     v-card-title
-            //-       span.headline {{ formTitle }}
-            //-     v-card-text
-            //-       v-container
-            //-         v-row
-            //-           v-col(cols='12', sm='6', md='4')
-            //-             v-text-field(v-model='editedItem.name', label='Nom du composant', required='')
-            //-           v-col(cols='12', sm='6', md='4')
-            //-             v-select(v-model='editedItem.provider', :items='providers', item-text='name', item-value='id', label='Fournisseur', required='')
-            //-           v-col(cols='12', sm='6', md='4')
-            //-             v-select(v-model='editedItem.ranges', :items='ranges', item-text='name', item-value='id', label='Gamme', required='')
-            //-           v-col(cols='12', sm='6', md='6')
-            //-             v-select(v-model='editedItem.family', :items='families', item-text='name', item-value='id', label='Famille / Nature', required='')
-            //-           v-col(cols='12', sm='6', md='6')
-            //-             v-text-field(v-model='editedItem.specs', label='Spécifications', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].specs : ""', required='', :disabled='editedItem.family === null')
-            //-     v-card-actions
-            //-       v-spacer
-            //-       v-btn(color='blue darken-1', text='', @click='close') Annuler
-            //-       v-btn(color='blue darken-1', text='', @click='save') Enregister
+        template(v-slot:item.createdAt='{ item }')
+          | {{formatDate(item.createdAt)}}
         template(v-slot:item.action='{ item }')
           v-icon.mr-2(@click='showDetails(item)', x-large='')
             | description
@@ -51,6 +29,7 @@
 
 <script>
   import router from '../router';
+  import moment from 'moment';
   import projectService from '../services/project.service'
   export default {
     name: 'listProjects',
@@ -113,6 +92,11 @@
     beforeDestroy(){
     },
     methods: {
+      formatDate(d){
+        moment.locale('fr')
+        var date = new moment(d);
+        return moment(date).utcOffset('+0000').format('L H:mm')
+      },
       async initialize () {
         const projectsResponse = await projectService.getProjects()
         this.projects = projectsResponse.data
@@ -127,12 +111,6 @@
       handleClick(value){
         this.selectedRow = value
       },
-
-      formatDate(date){
-        const itemDate = new Date(date)
-        return itemDate.getDate() + "/" + (itemDate.getMonth() + 1) + "/" + itemDate.getFullYear();
-      },
-
       backHome() {
         this.$router.push('/home')
       },
