@@ -174,7 +174,7 @@
           console.log(this.editedItem)
           if (this.editedIndex > -1) {
             this.resultSaveCustomer = await customerService.updateCustomer(this.editedItem)
-          } 
+          }
           // New
           else {
             this.resultSaveCustomer = await customerService.saveCustomer(this.editedItem)
