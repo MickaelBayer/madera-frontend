@@ -13,18 +13,40 @@
             v-icon.mr-2(x-large='', @click="$router.push('/listCustomers')" , color="#409a1b", v-if="role !== 3")
              | add_circle_outline
         template(v-slot:item.createdAt='{ item }')
-          | {{formatDate(item.createdAt)}}
+          | {{ formatDate(item.createdAt) }}
         template(v-slot:item.action='{ item }')
           v-icon.mr-2(@click='showDetails(item)', x-large='')
             | description
-          v-icon.mr-2(@click='editItem(item)', x-large='')
+          v-icon.mr-2(@click='editItem(item)', x-large='', v-if='role === 3')
             | edit
           v-icon(@click='deleteItem(item)', x-large='')
             | delete
+          v-dialog(v-model='dialog', max-width='1000px')
+            v-card
+              v-card-title
+                span.headline Projet {{ editedItem.name }} pour {{ editedItem.customer.firstName }} {{ editedItem.customer.lastName }}
+              v-card-text
+                v-container
+                  v-row
+                    v-col(cols='12', sm='6', md='4')
+                      v-text-field(v-model='editedItem.ranges.name', label='Gamme', disabled='')
+                    v-col(cols='12', sm='6', md='4')
+                      v-text-field(label='Date de création', disabled='', :value='formatDate(editedItem.createdAt)')
+                  span.headline Modules
+                  v-row
+                    v-col(cols='12', sm='6', md='4', v-for='module in editedItem.projectModules')
+                      v-text-field(:label='module.module.family.name', disabled='', :value='module.name')
+              v-card-actions(v-if='role == 2')
+                v-spacer
+                v-btn(color='blue darken-1', text='', @click='close') Fermer
+              v-card-actions(v-else)
+                v-spacer
+                v-btn(color='blue darken-1', text='', @click='close') Annuler
+                v-btn(color='blue darken-1', text='', @click='save') Enregister
         template(v-slot:no-data='')
           v-btn(color='primary', @click='initialize') Reset
-    v-alert(:type='resultSaveProjects.status' width="100%" class="successAddProjects" :icon="resultSaveProjects.icon" v-if="resultSaveProjects")
-      | {{resultSaveProjects.msg}}
+      v-alert(:type='resultSaveProjects.status' width="100%" class="successAddProjects" :icon="resultSaveProjects.icon" v-if="resultSaveProjects")
+        | {{resultSaveProjects.msg}}
 </template>
 
 <script>
@@ -57,18 +79,23 @@
         projects: [],
         editedIndex: -1,
         editedItem: {
-          name: '',
+          id: null,
+          name: null,
+          createdAt: null,
+          commercial: {},
+          customer: {},
+          ranges: {},
+          projectModules: [],
         },
         defaultItem: {
-          name: '',
+          id: null,
+          name: null,
+          createdAt: null,
+          commercial: {},
+          customer: {},
+          ranges: {},
+          projectModule: [],
         },
-        emailRules: [
-          value => (value || '').length <= 30 || 'Max 30 caractères',
-          value => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            return pattern.test(value) || 'E-mail invalide'
-          },
-        ],
       }
     },
     computed: {
@@ -76,33 +103,53 @@
         return this.editedIndex === -1 ? 'Nouveau fournisseur' : 'Edition d\'un fournisseur'
       },
     },
+
     watch: {
       dialog (val) {
         val || this.close()
       },
     },
+
     created () {
       this.initialize()
     },
+
     async mounted() {
-      // const projectsResponse = await projectService.getProjects()
-      // this.projects = projectsResponse.data
-      // console.log(this.projects)
     },
+
     beforeDestroy(){
     },
+
+    computed: {
+    },
+
     methods: {
+      async initialize () {
+        projectService.getProjects()
+        .then(response => {
+          this.projects = response.data
+          this.projects.forEach(element => {
+            projectService.getProjectModules(element.id)
+            .then(response => {
+              element.projectModules = response.data
+            })
+          });
+        })
+      },
+
       formatDate(d){
         moment.locale('fr')
         var date = new moment(d);
         return moment(date).utcOffset('+0000').format('L H:mm')
       },
-      async initialize () {
-        const projectsResponse = await projectService.getProjects()
-        this.projects = projectsResponse.data
-      },
 
       editItem (item) {
+        this.editedIndex = this.projects.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialog = true
+      },
+
+      async showDetails (item) {
         this.editedIndex = this.projects.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
@@ -116,7 +163,7 @@
       },
 
       async deleteItem (item) {
-        if (confirm('Etes vous sûr de vouloir supprimer ce fournisseur ?')) {
+        if (confirm('Etes vous sûr de vouloir supprimer ce projet ?')) {
           this.resultSaveProject = await projectService.deleteProject(item)
           this.initialize()
           await new Promise(resolve => {
@@ -130,6 +177,8 @@
       close () {
         this.dialog = false
         setTimeout(() => {
+          this.$store.commit('deleteProject');
+          this.$store.commit('deleteProjectModules');
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
