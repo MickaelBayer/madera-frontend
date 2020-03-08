@@ -42,24 +42,19 @@
               | edit
             v-icon(@click='deleteItem(item)', x-large='')
               | delete
-        v-btn.cancelCreate(outlined='', right='', color='#916834', @click='createHousePlan = true')  Créer le plan
+        v-btn.cancelCreate(outlined='', right='', color='#916834', @click='createPlanWindow')  Créer le plan
         v-btn.cancelCreate(outlined='', right='', color='#d92616', @click='backHome()')  Annuler
         v-btn(outlined='', right='', color='#409a1b', @click='createProject()')  Valider
     v-alert(:type='resultAddProject.status' width="100%" class="successAddProject" :icon="resultAddProject.icon" v-if="resultAddProject")
       | {{resultAddProject.msg}}
-    CreateHousePlan(v-if="createHousePlan"  @quit="createHousePlan = false")
 </template>
 
 
 <script>
   import moduleService from '../services/module.service';
   import projectService from '../services/project.service';
-  import CreateHousePlan from './CreateHousePlan';
   export default {
     name: 'createProject',
-    components: {
-      CreateHousePlan
-    },
     data() {
       return{
         name: null,
@@ -138,6 +133,10 @@
       }
     },
     methods: {
+      createPlanWindow(){
+        const win = window.open('http://localhost:8081/ressources/index.html', '_blank');
+        win.focus();
+      },
       async initialize(){
         const rangesResponse = await moduleService.getRanges();
         this.ranges = rangesResponse.data;
