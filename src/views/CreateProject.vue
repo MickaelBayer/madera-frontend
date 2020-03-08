@@ -15,6 +15,10 @@
               v-select(:items='ranges', v-model='range', label='Gamme', item-text="name", item-value="id", single-line='', required='', hide-details='', v-on:change='updateRange')
               v-spacer
               v-divider.mx-4(inset='', vertical='')
+              v-spacer
+              v-text-field.right-input(v-model='price', label='', item-text='price', :item-value='price', single-line='', hide-details='', readonly='', append-icon='euro_symbol')
+              v-spacer
+              v-divider.mx-4(inset='', vertical='')
               v-dialog(v-model='dialog', max-width='1000px')
                 template(v-slot:activator='{ on }')
                   v-icon.mr-2(x-large='', v-on='on', :disabled='name === null || name === "" || range === null', color="#409a1b")
@@ -37,6 +41,8 @@
                     v-spacer
                     v-btn(color='blue darken-1', text='', @click='close') Annuler
                     v-btn(color='blue darken-1', text='', @click='save') Ajouter
+          template(v-slot:item.price='{ item }')
+            | {{ (item.module.ranges.percentageFinalPrice * item.module.startingPrice * item.quantity).toFixed(2) }}
           template(v-slot:item.action='{ item }')
             v-icon.mr-2(@click='editItem(item)', x-large='')
               | edit
@@ -60,6 +66,7 @@
       return{
         name: null,
         range: null,
+        price: null,
         resultAddProject: null,
         dialog: false,
         ranges: [],
@@ -74,9 +81,10 @@
             value: 'name',
           },
           { text: 'Famille / Nature', value: 'module.family.name', sortable: false  },
-          { text: 'Taille / Quantité', value: 'quantity', align: 'right', ortable: false  },
+          { text: 'Taille / Quantité', value: 'quantity', align: 'right', sortable: false  },
           { text: 'Unités', value: 'module.family.units',sortable: false },
-          { text: 'Actions', value: 'action', sortable: false },
+          { text: 'Prix H.T. (€)', value:'price', sortable: false, align: 'right'},
+          { text: 'Actions', value: 'action', sortable: false, align: 'right'},
         ],
         editedIndex: -1,
         editedItem: {
@@ -84,12 +92,14 @@
           family: null,
           quantity: null,
           module: null,
+          price: null,
         },
         defaultItem: {
           name: '',
           family: null,
           quantity: null,
           module: null,
+          price: null,
         },
 
         //list module avec +
@@ -111,48 +121,37 @@
       },
     },
     async mounted() {
-      if(this.$store.state.project === {}){
-        this.$store.commit('resetPositionModule')
-      } else {
-        if(this.$store.state.project.name){
-          this.name = this.$store.state.project.name
-        }
-        if(this.$store.state.project.range){
-          this.range = this.$store.state.project.ranges.id
-        }
-      }
-      const rangesResponse = await moduleService.getRanges()
-      this.ranges = rangesResponse.data;
-      const familiesResponse = await moduleService.getModulesFamilies()
-      this.families = familiesResponse.data
-      const modulesResponse = await moduleService.getModules()
-      this.modules = modulesResponse.data;
-      if (this.$store.state.project.id){
-        this.projectModules = await projectService.getProjectModule()
-        this.$store.commit('setProjectModules', this.projectModules)
-      }
+      this.initialize()
     },
     methods: {
       async initialize(){
-        const rangesResponse = await moduleService.getRanges();
+        if(this.$store.state.project === {}){
+          this.$store.commit('resetPositionModule')
+        } else {
+          if(this.$store.state.project.name){
+            this.name = this.$store.state.project.name
+          }
+          if(this.$store.state.project.ranges){
+            this.range = this.$store.state.project.ranges.id
+          }
+        }
+        const rangesResponse = await moduleService.getRanges()
         this.ranges = rangesResponse.data;
-        const familiesResponse = await moduleService.getModulesFamilies();
+        const familiesResponse = await moduleService.getModulesFamilies()
         this.families = familiesResponse.data
-        const modulesResponse = await moduleService.getModules();
+        const modulesResponse = await moduleService.getModules()
         this.modules = modulesResponse.data;
-        this.name = this.$store.state.project.name
-        this.range = this.$store.state.project.ranges.id
-        if (this.$store.state.projectModules){
+        if (this.$store.state.project.id){
+          this.projectModules = await projectService.getProjectModule()
+          this.$store.commit('setProjectModules', this.projectModules)
+        } else {
           this.projectModules = this.$store.state.projectModules
         }
+        this.totalPrice()
       },
 
       backHome() {
         this.$router.push('/home')
-      },
-
-      save(){
-        console.log(this.editedItem)
       },
 
       close () {
@@ -197,6 +196,15 @@
         })
       },
 
+      totalPrice() {
+        let total = 0;
+        this.projectModules.forEach(element => {
+          total += Number((element.module.ranges.percentageFinalPrice * element.module.startingPrice * element.quantity).toFixed(2))
+        })
+        this.price = total.toFixed(2)
+        console.log(this.price)
+      },
+
       updateRange(){
         this.$store.commit('setProjectRange', this.ranges[this.ranges.findIndex(x => x.id === this.range)])
       },
@@ -205,9 +213,19 @@
         this.$store.commit('setProjectName', this.name)
       },
 
+      editItem(item) {
+        /** TODO */
+        console.log(item)
+      },
+
+      deleteItem(item) {
+        /** TODO */
+        console.log(item)
+      },
+
       async createProject(){
         if(this.$store.state.project.name && this.$store.state.project.ranges){
-          this.resultAddProject = await projectService.saveProject()
+          this.resultAddProject = await projectService.saveProject().then(async (res) => { await projectService.saveQuotation(this.price) })
           await new Promise(resolve => {
             setTimeout(() => {
               this.resultAddProject = null
@@ -217,7 +235,7 @@
               this.phone = null
               this.role = null
             }, 2000);
-            this.$router.push('/listCustomers')
+            this.$router.push('/listProjects')
           })
         } else {
           this.resultAddProject = {
@@ -246,6 +264,8 @@
     padding: 0.8rem
   .form
     width: 19rem
+  .right-input input
+    text-align: right !important
   .btnCreate
     margin-top: 3vh
   .cancelCreate

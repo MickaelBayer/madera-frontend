@@ -17,7 +17,7 @@ function saveProject() {
         .catch(error => {
           console.log(error)
         })
-      });
+      })
       if (response.status === 201) {
         return {
           status: 'success',
@@ -95,6 +95,52 @@ function deleteProject(project) {
     })
 }
 
+function saveQuotation(price) {
+  return instance.post("quotation", { totalPrice: Number(price),
+                                      state:{ id: 1 },
+                                      discount: 0,
+                                      project: { id: store.state.project.id } })
+}
+
+function getProjectQuotation(id){
+  return instance.get('/quotation/project/' + id)
+}
+
+function getStates(){
+  return instance.get('/quotationState')
+}
+
+function updateState(state) {
+  console.log(state)
+  state.state = {id: state.state}
+  return instance.put('/quotation/', state)
+    .then(response => {
+      if (response.status === 200) {
+        return {
+          status: 'success',
+          icon: 'check_circle',
+          msg: 'Devis correctement mis à jour.'
+        }
+      }
+    })
+    .catch(error => {
+      if(error.response.status === 401 ) {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Paramètre incorrect.'
+        }
+      }
+      else {
+        return {
+          status: 'error',
+          icon: 'error',
+          msg: 'Erreur au niveau du server.'
+        }
+      }
+    })
+}
+
 const projectService = {
   saveProject,
   getProjectModules,
@@ -102,6 +148,10 @@ const projectService = {
   getProjects,
   setProjectModules,
   deleteProject,
+  saveQuotation,
+  getProjectQuotation,
+  getStates,
+  updateState,
 }
 
 export default projectService
