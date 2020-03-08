@@ -10,7 +10,7 @@ import store from './store/store'
 Vue.config.productionTip = false
 Vue.use(Vuetify)
 
-export default new Vuetify({ icons: { 
+export default new Vuetify({ icons: {
                                       iconfont: 'mdi',
                                     },
                             })
