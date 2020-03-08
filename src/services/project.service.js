@@ -111,7 +111,6 @@ function getStates(){
 }
 
 function updateState(state) {
-  console.log(state)
   state.state = {id: state.state}
   return instance.put('/quotation/', state)
     .then(response => {

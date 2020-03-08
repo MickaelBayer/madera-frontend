@@ -148,7 +148,6 @@
                 projectService.getProjectModules(element.id)
                 .then(response => {
                   element.projectModules = response.data
-                  console.log(this.projects)
                 })
               })
             })
