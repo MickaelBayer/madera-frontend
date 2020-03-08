@@ -35,9 +35,7 @@ export const router = new VueRouter({
     { path: '/listComponents', component: listComponents },
     { path: '/listProviders', component: listProviders},
     { path: '/listProjects', component: listProjects },
-
-    // otherwise redirect to home
-    { path: '*', redirect: '/' }
+    //{ path: '*', redirect: '/' }
   ]
 })
 

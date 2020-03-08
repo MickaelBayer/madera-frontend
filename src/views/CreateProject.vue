@@ -1,6 +1,6 @@
 <template lang="pug">
   .createProject
-    v-layout(child-flex='')
+    v-layout(child-flex='' v-if="!createHousePlan")
       v-card
         v-data-table(item-key="id", :headers='headers', sort-by='position' :items='projectModules', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
           template(v-slot:top='')
@@ -42,6 +42,7 @@
               | edit
             v-icon(@click='deleteItem(item)', x-large='')
               | delete
+        v-btn.cancelCreate(outlined='', right='', color='#916834', @click='createPlanWindow')  Créer le plan
         v-btn.cancelCreate(outlined='', right='', color='#d92616', @click='backHome()')  Annuler
         v-btn(outlined='', right='', color='#409a1b', @click='createProject()')  Valider
     v-alert(:type='resultAddProject.status' width="100%" class="successAddProject" :icon="resultAddProject.icon" v-if="resultAddProject")
@@ -54,12 +55,11 @@
   import projectService from '../services/project.service';
   export default {
     name: 'createProject',
-    components: {
-    },
     data() {
       return{
         name: null,
         range: null,
+        createHousePlan: false,
         resultAddProject: null,
         dialog: false,
         ranges: [],
@@ -133,6 +133,10 @@
       }
     },
     methods: {
+      createPlanWindow(){
+        const win = window.open('http://localhost:8081/ressources/index.html', '_blank');
+        win.focus();
+      },
       async initialize(){
         const rangesResponse = await moduleService.getRanges();
         this.ranges = rangesResponse.data;
@@ -146,15 +150,9 @@
           this.projectModules = this.$store.state.projectModules
         }
       },
-
       backHome() {
         this.$router.push('/home')
       },
-
-      save(){
-        console.log(this.editedItem)
-      },
-
       close () {
         this.dialog = false
         setTimeout(() => {
