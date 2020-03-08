@@ -1,7 +1,7 @@
 <template lang="pug">
   .listProjects
     v-layout(child-flex='')
-      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by="createdAt", :items='projects', :search='search', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
+      v-data-table.elevation-1(item-key="id", :headers='headers', sort-by="createdAt", sort-desc='', :items='projects', :search='search', no-results-text="Aucun résultat.", :items-per-page='-1', hide-default-footer='')
         template(v-slot:top='')
           v-toolbar(flat='', color='white')
             v-toolbar-title Les projets
@@ -36,7 +36,13 @@
                   v-row
                     v-col(cols='12', sm='6', md='4', v-for='module in editedItem.projectModules')
                       v-text-field(:label='module.module.family.name', disabled='', :value='module.name')
-              v-card-actions(v-if='role == 2')
+                  span.headline(v-if='editedItem.quotation !== null') Devis
+                  v-row
+                    v-col(cols='12', sm='6', md='6', v-if='editedItem.quotation !== null')
+                      v-text-field(label='Prix H.T.', disabled='', :value='editedItem.quotation.totalPrice', append-icon='euro_symbol')
+                    v-col(cols='12', sm='6', md='6', v-if='editedItem.quotation !== null')
+                      v-select(:items='states', v-model='editedItem.quotation.state', label='Etat', item-text="name", item-value="id", :disabled='role == 2 || dialogToShow')
+              v-card-actions(v-if='role == 2 || dialogToShow')
                 v-spacer
                 v-btn(color='blue darken-1', text='', @click='close') Fermer
               v-card-actions(v-else)
@@ -62,6 +68,7 @@
         search: '',
         role: Number(this.$store.state.user.userRole),
         dialog: false,
+        dialogToShow: false,
         resultSaveProjects: null,
         selectedRow: null,
         headers: [
@@ -77,6 +84,7 @@
           { text: 'Actions', value: 'action', sortable: false },
         ],
         projects: [],
+        states: [],
         editedIndex: -1,
         editedItem: {
           id: null,
@@ -84,6 +92,7 @@
           createdAt: null,
           commercial: {},
           customer: {},
+          quotation: null,
           ranges: {},
           projectModules: [],
         },
@@ -93,6 +102,7 @@
           createdAt: null,
           commercial: {},
           customer: {},
+          quotation: null,
           ranges: {},
           projectModule: [],
         },
@@ -128,12 +138,20 @@
         projectService.getProjects()
         .then(response => {
           this.projects = response.data
-          this.projects.forEach(element => {
-            projectService.getProjectModules(element.id)
-            .then(response => {
-              element.projectModules = response.data
+          projectService.getStates()
+          .then(responseStates => {
+            this.states = responseStates.data
+            this.projects.forEach(element => {
+              projectService.getProjectQuotation(element.id)
+              .then(responseQuotation => {
+                element.quotation = responseQuotation.data[0] ? responseQuotation.data[0] : null;
+                projectService.getProjectModules(element.id)
+                .then(response => {
+                  element.projectModules = response.data
+                })
+              })
             })
-          });
+          })
         })
       },
 
@@ -152,6 +170,7 @@
       async showDetails (item) {
         this.editedIndex = this.projects.indexOf(item)
         this.editedItem = Object.assign({}, item)
+        this.dialogToShow = true
         this.dialog = true
       },
 
@@ -182,20 +201,32 @@
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
+        this.dialogToShow = false
       },
 
       async save () {
-        if(this.editedItem.name && this.editedItem.address && this.editedItem.mail){
+        if(this.editedItem.quotation !== null){
           // edit
           if (this.editedIndex > -1) {
-            this.resultSaveProject = await moduleService.updateProject(this.editedItem)
+            this.resultSaveProject = await projectService.updateState(this.editedItem.quotation)
           }
           // new
           else {
-            this.resultSaveProject = await moduleService.saveProject(this.editedItem)
+            this.resultSaveProject = await projectService.saveProject(this.editedItem.quotation)
           }
           this.initialize()
           this.close()
+        // if(this.editedItem.name && this.editedItem.address && this.editedItem.mail){
+        //   // edit
+        //   if (this.editedIndex > -1) {
+        //     this.resultSaveProject = await moduleService.updateProject(this.editedItem)
+        //   }
+        //   // new
+        //   else {
+        //     this.resultSaveProject = await moduleService.saveProject(this.editedItem)
+        //   }
+        //   this.initialize()
+        //   this.close()
         }
         else {
         this.resultSaveProject = {
