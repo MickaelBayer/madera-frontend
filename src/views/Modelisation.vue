@@ -26,7 +26,7 @@
     option(value="https://www.parquet-terrasse-bois.fr/wp-content/uploads/2019/01/THERMO-210-600x600.jpg")  Bois de douglas 
     option(value="https://www.parquet-terrasse-bois.fr/wp-content/uploads/2018/09/Brun-buisson-LC75_0017_6004_Classic_LC75_Frontal-300x300.jpg")  Bois de mélèze 
    #Action
-   v-btn(small="", color="success" @click="createWall" id="Wall") Créer un mur
+   v-btn(small="", color="success" @click="createWall" id="Wall") Créer une surface en bois
      .label
    h3 Action création porte:
    #create
@@ -45,11 +45,12 @@
    .label
    h3 Controles:
    #Controle
-    v-btn(small="", color="primary"  id="mouve") Bouger l'élément
-    v-btn(small="", color="primary"  id="rotate") Faire une rotation de l'élément
-    v-btn(small="", color="primary"  id="scale") Changer la taille de l'élément courant
-    v-btn(small="", color="primary"  id="freeMouve") Bouger librement l'élément courant
-    v-btn(small="", color="primary"  id="supress") Supprimer dernier élément
+    v-btn(small="", color="primary"  id="mouve") Mouvement
+    v-btn(small="", color="primary"  id="rotate") Rotation
+    v-btn(small="", color="primary"  id="scale") Taille
+    v-btn(small="", color="primary"  id="freeMouve") Mouvement libre
+    v-btn(small="", color="primary"  id="supress") Supprimer
+    v-btn(small="", color="primary"  id="cible") Change cible
    #container
 </template>
 
@@ -85,3 +86,4 @@ button{
   background-color: darkgray;
 }
 </style>
+
