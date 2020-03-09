@@ -81,6 +81,7 @@ const mutations = {
   resetPositionModule(state){
     state.positionModule = 1
   }
+  
 }
 
 export default new Vuex.Store({
