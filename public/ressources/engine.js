@@ -2,6 +2,11 @@ document.querySelector('#lin').addEventListener("mouseup", _MOUSEUP);
 document.querySelector('#lin').addEventListener("mousemove", throttle(function(event){ _MOUSEMOVE(event);},30));
 document.querySelector('#lin').addEventListener("mousedown", _MOUSEDOWN, true);
 
+document.querySelector('#lin').addEventListener("touchend", _MOUSEUP);
+document.querySelector('#lin').addEventListener("touchmove", throttle(function(event){ _MOUSEMOVE(event);},30));
+document.querySelector('#lin').addEventListener("touchstart", _MOUSEDOWN, true);
+
+
 $(document).on('click', '#lin', function(event) {
     event.preventDefault();
 });

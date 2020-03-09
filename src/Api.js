@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from './store/store';
 
-export const SERVER_URL = 'http://localhost:8282';
+export const SERVER_URL = 'http://172.20.10.2:8282';
 
 export const instance = axios.create({
   baseURL: SERVER_URL,
@@ -16,7 +16,7 @@ instance.interceptors.request.use(
       config.headers['Authorization'] = `Bearer ${ token }`;
     }
     return config;
-  }, 
+  },
 
   (error) => {
     return Promise.reject(error);

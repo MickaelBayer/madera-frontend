@@ -125,7 +125,7 @@
     },
     methods: {
       createPlanWindow(){
-        const win = window.open('http://localhost:8081/ressources/index.html', '_blank');
+        const win = window.open('/ressources/index.html', '_blank');
         win.focus();
       },
       async initialize(){
@@ -156,7 +156,7 @@
       backHome() {
         this.$router.push('/home')
       },
-      
+
       close () {
         this.dialog = false
         setTimeout(() => {
