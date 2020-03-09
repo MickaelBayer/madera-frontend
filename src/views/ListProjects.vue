@@ -158,7 +158,7 @@
 
       renderPrice(module) {
         console.log(module)
-        return module.quantity * module.module.startingPrice * module.module.ranges.percentageFinalPrice
+        return (module.quantity * module.module.startingPrice * module.module.ranges.percentageFinalPrice).toFixed(2)
       },
 
       formatDate(d){
