@@ -36,6 +36,7 @@
                   v-row
                     v-col(cols='12', sm='6', md='4', v-for='module in editedItem.projectModules')
                       v-text-field(:label='module.module.family.name', disabled='', :value='module.name')
+                      v-text-field(label='prix', disabled='', :value='renderPrice(module)', append-icon='euro_symbol')
                   span.headline(v-if='editedItem.quotation !== null') Devis
                   v-row
                     v-col(cols='12', sm='6', md='6', v-if='editedItem.quotation !== null')
@@ -153,6 +154,11 @@
             })
           })
         })
+      },
+
+      renderPrice(module) {
+        console.log(module)
+        return module.quantity * module.module.startingPrice * module.module.ranges.percentageFinalPrice
       },
 
       formatDate(d){
