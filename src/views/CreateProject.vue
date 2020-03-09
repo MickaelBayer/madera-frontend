@@ -36,7 +36,7 @@
                         v-col(cols='12', sm='6', md='6')
                           v-text-field(v-model='editedItem.quantity', type='number' label='Taille / Quantité', :hint='editedItem.family && families[families.findIndex(x => x.id === editedItem.family)] ? families[families.findIndex(x => x.id === editedItem.family)].units : ""', required='', :disabled='editedItem.family === null')
                         v-col(cols='12', sm='6', md='6', v-if='(editedItem.family !== null) && ((modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))).length !== 0)')
-                          v-select(v-model='editedItem.module', :items='modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))', item-text='name', item-value='id', label='Module', required='', :disabled='editedIndex !== -1')
+                          v-select(v-model='editedItem.module', :items='modules.filter(x => (x.ranges.id === range) && (x.family.id === editedItem.family))', item-text='name', item-value='id', label='Module', required='')
                   v-card-actions
                     v-spacer
                     v-btn(color='blue darken-1', text='', @click='close') Annuler
@@ -50,7 +50,7 @@
               | delete
         v-btn.cancelCreate(outlined='', right='', color='#916834', @click='createPlanWindow')  Créer le plan
         v-btn.cancelCreate(outlined='', right='', color='#d92616', @click='backHome()')  Annuler
-        v-btn(outlined='', right='', color='#409a1b', @click='createProject()')  Valider
+        v-btn(outlined='', right='', color='#409a1b', @click='createProject()')  Enregistrer
     v-alert(:type='resultAddProject.status' width="100%" class="successAddProject" :icon="resultAddProject.icon" v-if="resultAddProject")
       | {{resultAddProject.msg}}
 </template>
@@ -101,13 +101,6 @@
           module: null,
           price: null,
         },
-
-        //list module avec +
-        //cliquer glisser ?
-        //input nom
-        //modale enregistrement module spécifique projet, angle position
-
-
       }
     },
     computed: {
@@ -175,7 +168,8 @@
           projectModule.quantity = this.editedItem.quantity
           // Edit
           if (this.editedIndex > -1) {
-            //this.resultSaveComponent = await moduleService.updateComponent(this.editedItem)
+            this.$store.commit('deleteModuleFromProject', this.projectModules[this.projectModules.findIndex(x => x.position === this.editedItem.position)])
+            this.$store.commit('addModuleToProject', projectModule)
           }
           // New
           else {
@@ -205,7 +199,6 @@
           total += Number((element.module.ranges.percentageFinalPrice * element.module.startingPrice * element.quantity).toFixed(2))
         })
         this.price = total.toFixed(2)
-        console.log(this.price)
       },
 
       updateRange(){
@@ -217,13 +210,28 @@
       },
 
       editItem(item) {
-        /** TODO */
-        console.log(item)
+        this.editedIndex = this.projectModules.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.editedItem.family = this.editedItem.module.family.id
+        this.dialog = true
       },
 
-      deleteItem(item) {
-        /** TODO */
-        console.log(item)
+      async deleteItem(item) {
+        if (confirm('Etes vous sûr de vouloir supprimer ce client ?')) {
+          this.$store.commit('deleteModuleFromProject', item)
+          this.editedIndex = -1
+          this.resultSaveCustomer = {
+                                      status: 'success',
+                                      icon: 'check_circle',
+                                      msg: 'Module correctement supprimé du projet.'
+                                    }
+          this.initialize()
+          await new Promise(resolve => {
+            setTimeout(() => {
+              this.resultSaveCustomer = null
+            }, 2000);
+          })
+        }
       },
 
       async createProject(){
